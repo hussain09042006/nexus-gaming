@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090a12">
+  <meta name="description" content="Compare up to three PC games side by side using the information available in the Nexus Gaming catalog.">
+  <link rel="canonical" href="https://hussain09042006.github.io/nexus-gaming/compare.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nexus Gaming">
+  <meta property="og:title" content="Compare Games | Nexus Gaming">
+  <meta property="og:description" content="Compare available game details side by side.">
+  <meta property="og:url" content="https://hussain09042006.github.io/nexus-gaming/compare.html">
+  <meta name="twitter:card" content="summary">
+  <title>Compare Games | Nexus Gaming</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="catalog.js" defer></script>
+  <script src="pages.js" defer></script>
+</head>
+<body data-page="compare">
+  <a class="skip-link visually-hidden" href="#mainContent">Skip to main content</a>
+  <header class="navbar">
+    <a class="logo" href="index.html" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation">
+      <a href="index.html" data-nav-page="home">Home</a>
+      <a href="games.html" data-nav-page="games">Library</a>
+      <a href="genres.html" data-nav-page="genres">Genres</a>
+      <a href="my-games.html" data-nav-page="my-games">My Games</a>
+      <a href="store.html" data-nav-page="store">Store</a>
+      <a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a>
+    </nav>
+    <div class="header-actions">
+      <a class="saved-link" href="my-games.html"><span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" data-favorite-count>0</span></a>
+      <form class="search-container" action="games.html" method="get" role="search">
+        <label class="visually-hidden" for="globalSearch">Search the game library</label>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="globalSearch" name="q" type="search" placeholder="Search games..." autocomplete="off">
+      </form>
+    </div>
+  </header>
+  <main id="mainContent" class="page-main compare-page">
+    <header class="page-intro">
+      <p class="eyebrow">SIDE-BY-SIDE</p>
+      <h1>Compare games<span class="heading-period">.</span></h1>
+      <p>Review the catalog details available for up to three games. Unknown information is shown as unavailable, not guessed.</p>
+    </header>
+    <section class="compare-page-panel" aria-labelledby="comparisonHeading">
+      <div class="compare-page-toolbar">
+        <p id="comparisonCount" class="results-count" role="status" aria-live="polite"></p>
+        <div class="compare-page-actions">
+          <a class="details-button" href="games.html">Add games from the library</a>
+          <button class="clear-filters" id="clearComparisonPage" type="button" data-action="clear-comparison" hidden>Clear comparison</button>
+        </div>
+      </div>
+      <h2 id="comparisonHeading" class="visually-hidden">Selected game comparison</h2>
+      <div class="comparison-content" id="comparisonTableArea" aria-live="polite"></div>
+      <p class="comparison-page-note">Your selection is stored as game IDs in this browser only. Ratings are existing catalog values and their source is unverified.</p>
+    </section>
+  </main>
+  <footer class="footer page-footer">
+    <a class="logo footer-logo" href="index.html"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <p class="footer-description">A curated guide to your next great game.</p>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="games.html">Library</a><a href="genres.html">Genres</a><a href="my-games.html">My Games</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a>
+    </nav>
+    <span class="copyright">© <span data-current-year></span> Nexus Gaming · Comparison stays in this browser.</span>
+  </footer>
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

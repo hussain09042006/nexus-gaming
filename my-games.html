@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#090a12">
+  <meta name="description" content="View favourites and recently viewed games saved in this browser on this device.">
+  <link rel="canonical" href="https://hussain09042006.github.io/nexus-gaming/my-games.html">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="Nexus Gaming"><meta property="og:title" content="My Games | Nexus Gaming"><meta property="og:description" content="Your browser-local favourites and recently viewed games."><meta property="og:url" content="https://hussain09042006.github.io/nexus-gaming/my-games.html"><meta name="twitter:card" content="summary">
+  <title>My Games | Nexus Gaming</title><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="styles.css"><script src="catalog.js" defer></script><script src="pages.js" defer></script>
+</head>
+<body data-page="my-games">
+  <a class="skip-link visually-hidden" href="#mainContent">Skip to main content</a>
+  <header class="navbar">
+    <a class="logo" href="index.html" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation"><a href="index.html" data-nav-page="home">Home</a><a href="games.html" data-nav-page="games">Library</a><a href="genres.html" data-nav-page="genres">Genres</a><a href="my-games.html" data-nav-page="my-games">My Games</a><a href="store.html" data-nav-page="store">Store</a><a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a></nav>
+    <div class="header-actions"><a class="saved-link" href="my-games.html"><span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" data-favorite-count>0</span></a><form class="search-container" action="games.html" method="get" role="search"><label class="visually-hidden" for="globalSearch">Search the game library</label><span class="search-icon" aria-hidden="true">⌕</span><input id="globalSearch" name="q" type="search" placeholder="Search games..." autocomplete="off"></form></div>
+  </header>
+  <main id="mainContent" class="page-main">
+    <header class="page-intro"><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h1>My Games<span class="heading-period">.</span></h1><p>Favourites and recent history are saved locally in this browser on this device. They do not sync between devices.</p></header>
+    <section class="personal-page-section" aria-labelledby="favoritePageTitle"><div class="section-heading"><div><p class="eyebrow">YOUR SHORTLIST</p><h2 id="favoritePageTitle">Favourites<span class="heading-period">.</span></h2></div><span class="personal-count" id="favoritePageCount">0</span></div><div class="game-cards page-game-cards" id="favoriteCards"></div></section>
+    <section class="personal-page-section" aria-labelledby="recentPageTitle"><div class="section-heading"><div><p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p><h2 id="recentPageTitle">Recently viewed<span class="heading-period">.</span></h2></div><span class="personal-count" id="recentPageCount">0</span></div><div class="game-cards page-game-cards" id="recentCards"></div></section>
+  </main>
+  <footer class="footer page-footer"><a class="logo footer-logo" href="index.html"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a><p class="footer-description">A curated guide to your next great game.</p><nav class="footer-nav" aria-label="Footer navigation"><a href="games.html">Library</a><a href="genres.html">Genres</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a></nav><span class="copyright">© <span data-current-year></span> Nexus Gaming · Stored in this browser only.</span></footer>
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

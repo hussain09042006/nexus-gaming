@@ -4,41 +4,54 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090a12">
-  <meta name="description" content="Discover your next favourite game in the Nexus Gaming library.">
+  <meta name="description" content="Explore a curated library of PC games, find your next adventure, and save favourites to your personal collection with Nexus Gaming.">
   <meta name="mitgo-verification" content="3a36ce37-0952-4481-8fcd-bf950c5d9afd" />
+  <link rel="canonical" href="https://hussain09042006.github.io/nexus-gaming/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nexus Gaming">
+  <meta property="og:title" content="Nexus Gaming | Discover Your Next Game">
+  <meta property="og:description" content="Explore a curated library of PC games, find your next adventure, and save favourites to your personal collection.">
+  <meta property="og:url" content="https://hussain09042006.github.io/nexus-gaming/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nexus Gaming | Discover Your Next Game">
+  <meta name="twitter:description" content="Explore a curated library of PC games, find your next adventure, and save favourites to your personal collection.">
   <title>Nexus Gaming | Discover Your Next Game</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
+  <script src="catalog.js" defer></script>
+  <script src="pages.js" defer></script>
   <script src="script.js" defer></script>
-  
 </head>
-<body>
+<body data-page="home">
   <a class="skip-link visually-hidden" href="#mainContent">Skip to main content</a>
   <header class="navbar" id="home">
-    <a class="logo" href="#home" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <a class="logo" href="index.html" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
     <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
     <nav class="nav-links" id="mainNavigation" aria-label="Main navigation">
-      <a href="#discover">Discover</a>
-      <a href="#trending">Featured picks</a>
-      <a href="#topRated">Top Rated</a>
-      <a href="#games">Games Library</a>
-      <a href="#myGames">My Games</a>
+      <a href="index.html" data-nav-page="home">Home</a>
+      <a href="games.html" data-nav-page="games">Library</a>
+      <a href="genres.html" data-nav-page="genres">Genres</a>
+      <a href="my-games.html" data-nav-page="my-games">My Games</a>
+      <a href="store.html" data-nav-page="store">Store</a>
+      <a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a>
     </nav>
     <div class="header-actions">
-      <button class="saved-link" id="savedGamesButton" type="button" aria-pressed="false">
-        <span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" id="savedCount">0</span>
-      </button>
-      <div class="search-container">
+      <a class="saved-link" id="savedGamesButton" href="my-games.html">
+        <span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" id="savedCount" data-favorite-count>0</span>
+      </a>
+      <form class="search-container" action="games.html" method="get" role="search">
         <label class="visually-hidden" for="searchBar">Search games by title, genre, description, or year</label>
         <span class="search-icon" aria-hidden="true">⌕</span>
-        <input type="search" id="searchBar" placeholder="Search games..." autocomplete="off">
+        <input type="search" id="searchBar" name="q" placeholder="Search games..." autocomplete="off">
         <button class="search-clear" id="clearSearch" type="button" aria-label="Clear search" hidden>×</button>
-      </div>
+      </form>
     </div>
   </header>
 
   <main id="mainContent">
-    <section class="hero featured-hero" id="discover" aria-labelledby="heroTitle">
-      <img class="hero-art" id="heroArtwork" alt="" fetchpriority="high">
+    <section class="hero featured-hero" id="discover" aria-labelledby="heroTitle" aria-roledescription="carousel" aria-label="Editor's pick carousel">
+      <img class="hero-art is-current" id="heroArtwork" alt="" loading="eager" decoding="async" fetchpriority="high">
+      <img class="hero-art hero-art-secondary" id="heroArtworkSecondary" alt="" aria-hidden="true" loading="eager" decoding="async" hidden>
       <div class="hero-glow" aria-hidden="true"></div>
       <div class="hero-content">
         <p class="eyebrow"><span></span> CURATED FEATURE</p>
@@ -52,10 +65,15 @@
         </div>
       </div>
       <div class="hero-art-caption"><span class="live-dot"></span> EDITOR'S PICK</div>
-      <div class="hero-controls">
+      <div class="hero-controls" aria-label="Editor's pick controls">
         <button id="previousFeatured" type="button" aria-label="Previous featured game">←</button>
         <div class="hero-dots" id="heroDots" role="group" aria-label="Choose featured game"></div>
         <button id="nextFeatured" type="button" aria-label="Next featured game">→</button>
+        <button id="toggleFeaturedRotation" type="button" aria-label="Pause automatic slide rotation" aria-pressed="false">Ⅱ</button>
+        <span class="hero-slide-status visually-hidden" id="heroSlideStatus" aria-live="off"></span>
+        <div class="hero-progress" id="heroProgress" role="progressbar" aria-label="Time until next featured game" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+          <span id="heroProgressFill"></span>
+        </div>
       </div>
     </section>
 
@@ -88,6 +106,14 @@
         </div>
         <div class="mini-game-list" id="recommendedGames"></div>
       </section>
+    </section>
+
+    <section class="trending-section release-section" id="newReleases" aria-labelledby="newReleasesTitle">
+      <div class="section-heading trending-heading">
+        <div><p class="eyebrow">ORDERED BY CATALOG RELEASE YEAR</p><h2 id="newReleasesTitle">Recent releases<span class="heading-period">.</span></h2></div>
+        <a class="section-link" href="games.html?sort=year-desc">Browse by year <span aria-hidden="true">↘</span></a>
+      </div>
+      <div class="trending-cards" id="newReleaseCards"></div>
     </section>
 
     <section class="my-games-section" id="myGames" aria-labelledby="myGamesTitle">
@@ -164,10 +190,10 @@
   </main>
 
   <footer class="footer" id="contact">
-    <a class="logo footer-logo" href="#home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <a class="logo footer-logo" href="index.html"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
     <p class="footer-description">A curated guide to your next great game.</p>
     <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="#discover">Discover</a><a href="#trending">Featured picks</a><a href="#games">Game library</a><a href="#myGames">My Games</a><a href="#home">Back to top ↑</a>
+      <a href="games.html">Game library</a><a href="genres.html">Genres</a><a href="my-games.html">My Games</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="#home">Back to top ↑</a>
     </nav>
     <span class="copyright">&copy; <span id="currentYear"></span> Nexus Gaming <span class="footer-separator">·</span> Your saved games stay on this device.<span class="rating-disclaimer">Only the original eight games show legacy ratings; their sources are unverified.</span></span>
   </footer>
@@ -185,7 +211,7 @@
       <section class="dialog-purchase" aria-labelledby="purchaseTitle">
         <h3 id="purchaseTitle">Purchase options</h3>
         <p class="purchase-empty" id="purchaseEmpty">Purchase links coming soon.</p>
-        <div class="purchase-offers" id="purchaseOffers"></div>
+        <div class="purchase-offers" id="purchaseOffers" aria-live="polite"></div>
       </section>
       <div class="dialog-actions">
         <button class="favorite-btn dialog-favorite" id="dialogFavorite" type="button"></button>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090a12">
+  <meta name="description" content="Explore PC games by genre in the Nexus Gaming collection. Genre counts are derived from the game catalog.">
+  <link rel="canonical" href="https://hussain09042006.github.io/nexus-gaming/genres.html">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="Nexus Gaming"><meta property="og:title" content="Explore Genres | Nexus Gaming"><meta property="og:description" content="Browse the PC game collection by genre."><meta property="og:url" content="https://hussain09042006.github.io/nexus-gaming/genres.html">
+  <meta name="twitter:card" content="summary"><title>Explore Genres | Nexus Gaming</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="styles.css">
+  <script src="catalog.js" defer></script><script src="pages.js" defer></script>
+</head>
+<body data-page="genres">
+  <a class="skip-link visually-hidden" href="#mainContent">Skip to main content</a>
+  <header class="navbar">
+    <a class="logo" href="index.html" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation"><a href="index.html" data-nav-page="home">Home</a><a href="games.html" data-nav-page="games">Library</a><a href="genres.html" data-nav-page="genres">Genres</a><a href="my-games.html" data-nav-page="my-games">My Games</a><a href="store.html" data-nav-page="store">Store</a><a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a></nav>
+    <div class="header-actions"><a class="saved-link" href="my-games.html"><span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" data-favorite-count>0</span></a><form class="search-container" action="games.html" method="get" role="search"><label class="visually-hidden" for="globalSearch">Search the game library</label><span class="search-icon" aria-hidden="true">⌕</span><input id="globalSearch" name="q" type="search" placeholder="Search games..." autocomplete="off"></form></div>
+  </header>
+  <main id="mainContent" class="page-main">
+    <header class="page-intro"><p class="eyebrow">FIND YOUR KIND OF ADVENTURE</p><h1>Explore by genre<span class="heading-period">.</span></h1><p>Browse categories based on the existing game catalog. Each count reflects the titles currently listed.</p></header>
+    <section class="genre-page-section" aria-label="Game genres">
+      <div class="genre-tools" role="search">
+        <label for="genreSearch">Search genres</label><input id="genreSearch" type="search" placeholder="Find a genre">
+        <label for="genreSort">Sort by</label><select id="genreSort"><option value="name-asc">Name, A–Z</option><option value="count-desc">Most games</option><option value="count-asc">Fewest games</option></select>
+        <button class="clear-filters" id="clearGenreSearch" type="button" hidden>Clear search</button>
+        <p id="genreCount" class="results-count" aria-live="polite"></p>
+      </div>
+      <div class="page-genre-grid" id="genreTiles" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="footer page-footer"><a class="logo footer-logo" href="index.html"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a><p class="footer-description">A curated guide to your next great game.</p><nav class="footer-nav" aria-label="Footer navigation"><a href="games.html">Library</a><a href="my-games.html">My Games</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a></nav><span class="copyright">© <span data-current-year></span> Nexus Gaming · Saved games stay on this device.</span></footer>
+</body>
+</html>

@@ -1,65 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const games = [
-    { id: 1, title: 'Cyberpunk 2077', genre: 'RPG', rating: 4.5, appId: 1091500, year: 2020, description: 'Become a cyberpunk mercenary in Night City, a sprawling metropolis obsessed with power, glamour, and body modification.', alt: 'Cyberpunk 2077 key art featuring the neon-soaked streets of Night City' },
-    { id: 2, title: 'The Witcher 3: Wild Hunt', genre: 'RPG', rating: 4.8, appId: 292030, year: 2015, description: 'Track a child of prophecy across a vast fantasy world as Geralt of Rivia, a professional monster hunter.', alt: 'The Witcher 3: Wild Hunt artwork of Geralt in a dark fantasy landscape' },
-    { id: 3, title: 'Red Dead Redemption 2', genre: 'Action', rating: 4.7, appId: 1174180, year: 2019, description: 'Join outlaw Arthur Morgan and the Van der Linde gang in an epic story set across the final years of the American Wild West.', alt: 'Red Dead Redemption 2 artwork depicting the Van der Linde gang in the Old West' },
-    { id: 4, title: 'Elden Ring', genre: 'RPG', rating: 4.9, appId: 1245620, year: 2022, description: 'Explore the Lands Between, uncover its secrets, and become an Elden Lord in a vast action RPG from FromSoftware.', alt: 'Elden Ring artwork featuring a Tarnished warrior beneath the Erdtree' },
-    { id: 5, title: 'God of War Ragnarök', genre: 'Action', rating: 4.9, appId: 2322010, year: 2024, description: 'Join Kratos and Atreus on a mythic journey through the Nine Realms as the Norse prophecy of Ragnarök draws near.', alt: 'God of War Ragnarök artwork featuring Kratos and Atreus in the Norse realms' },
-    { id: 6, title: 'Horizon Forbidden West', genre: 'Action', rating: 4.6, appId: 2420110, year: 2024, description: 'Join Aloy as she ventures into a dangerous frontier filled with machine life and investigates a threat to the future.', alt: 'Horizon Forbidden West artwork featuring Aloy in a vibrant machine-filled landscape' },
-    { id: 7, title: "Baldur's Gate 3", genre: 'Strategy', rating: 4.9, appId: 1086940, year: 2023, description: 'Gather your party and shape the Forgotten Realms in a richly reactive role-playing adventure based on Dungeons & Dragons.', alt: "Baldur's Gate 3 fantasy key art featuring its adventuring party" },
-    { id: 8, title: 'EA SPORTS FC 26', genre: 'Sports', rating: 4.4, appId: 3405690, artworkPath: '3405690/2d96aa1b06e453cd62dae9029d412f19e61932c3/header.jpg?t=1789751159', year: 2025, description: 'Take to the pitch with your favourite clubs and players in the latest edition of the world’s game.', alt: 'EA SPORTS FC 26 football key art' },
-    { id: 9, title: 'Grand Theft Auto V Enhanced', genre: 'Open World', appId: 3240220, year: 2025, description: 'Explore Los Santos and Blaine County, follow three intertwined criminal lives, and take on the evolving GTA Online world.', alt: 'Grand Theft Auto V Enhanced artwork featuring Los Santos' },
-    { id: 10, title: 'Forza Horizon 5', genre: 'Racing', appId: 1551360, year: 2021, description: 'Race across Mexico in a festival of driving, from deserts and jungles to cities and mountain roads.', alt: 'Forza Horizon 5 artwork featuring cars in Mexico' },
-    { id: 11, title: 'Hogwarts Legacy', genre: 'RPG', appId: 990080, year: 2023, description: 'Attend Hogwarts in the 1800s, learn magic, and uncover an ancient secret in the wizarding world.', alt: 'Hogwarts Legacy artwork featuring Hogwarts School' },
-    { id: 12, title: "Marvel's Spider-Man Remastered", genre: 'Action', appId: 1817070, year: 2022, description: 'Swing through a modern New York City and face familiar foes in Peter Parker’s action-adventure story.', alt: "Marvel's Spider-Man Remastered artwork featuring Spider-Man" },
-    { id: 13, title: "Ghost of Tsushima Director's Cut", genre: 'Action', appId: 2215430, year: 2024, description: 'Fight across Tsushima as samurai Jin Sakai and resist the Mongol invasion in an open-world adventure.', alt: "Ghost of Tsushima Director's Cut artwork featuring Jin Sakai" },
-    { id: 14, title: 'Black Myth: Wukong', genre: 'Action', appId: 2358720, year: 2024, description: 'Take up the staff of the Destined One and battle legendary foes in an action RPG inspired by Journey to the West.', alt: 'Black Myth: Wukong artwork featuring the Destined One' },
-    { id: 15, title: 'Hades II', genre: 'Indie', appId: 1145350, year: 2025, description: 'Fight beyond the Underworld as Melinoë in a myth-inspired action roguelike from Supergiant Games.', alt: 'Hades II artwork featuring Melinoë' },
-    { id: 16, title: 'Resident Evil 4', genre: 'Horror', appId: 2050650, year: 2023, description: 'Join Leon S. Kennedy on a dangerous mission to rescue the president’s daughter in this survival-horror remake.', alt: 'Resident Evil 4 remake artwork featuring Leon S. Kennedy' },
-    { id: 17, title: 'Clair Obscur: Expedition 33', genre: 'RPG', appId: 1903340, year: 2025, description: 'Lead Expedition 33 against the Paintress in a turn-based role-playing adventure with real-time combat actions.', alt: 'Clair Obscur: Expedition 33 artwork featuring the expedition' },
-    { id: 18, title: 'HELLDIVERS 2', genre: 'Shooter', appId: 553850, year: 2024, description: 'Join a squad of Helldivers in cooperative missions to defend Super Earth from hostile alien forces.', alt: 'HELLDIVERS 2 artwork featuring a Helldiver squad' },
-    { id: 19, title: 'Hollow Knight: Silksong', genre: 'Indie', appId: 1030300, year: 2025, description: 'Guide Hornet through Pharloom, exploring a new kingdom and battling its creatures in this action-platform adventure.', alt: 'Hollow Knight: Silksong artwork featuring Hornet' },
-    { id: 20, title: 'Stardew Valley', genre: 'Simulation', appId: 413150, year: 2016, description: 'Build a life in the countryside as you restore a farm, meet the townspeople, and explore the valley.', alt: 'Stardew Valley artwork featuring its countryside and farm' },
-    { id: 21, title: "No Man's Sky", genre: 'Simulation', appId: 275850, year: 2016, description: 'Explore a procedurally generated universe, discover planets, and build a life among the stars.', alt: "No Man's Sky artwork featuring an alien planet" },
-    { id: 22, title: 'Palworld', genre: 'Multiplayer', appId: 1623730, year: 2024, description: 'Explore, build, and survive with mysterious creatures called Pals in a shared open world.', alt: 'Palworld artwork featuring Pals and their world' },
-    { id: 23, title: 'Sea of Thieves', genre: 'Multiplayer', appId: 1172620, year: 2018, description: 'Sail with a crew, search for treasure, and encounter rival pirates across a shared open sea.', alt: 'Sea of Thieves artwork featuring a pirate ship at sea' },
-    { id: 24, title: 'Microsoft Flight Simulator 2024', genre: 'Simulation', appId: 2537590, year: 2024, description: 'Fly a range of aircraft across a detailed digital world in this civil aviation simulator.', alt: 'Microsoft Flight Simulator 2024 artwork featuring aircraft in flight' },
-    { id: 25, title: 'Lies of P', genre: 'Action', appId: 1627720, year: 2023, description: 'Battle through a dark Belle Époque city as Pinocchio searches for Geppetto in this soulslike action adventure.', alt: 'Lies of P artwork featuring Pinocchio in Krat' },
-    { id: 26, title: 'Control Ultimate Edition', genre: 'Action', appId: 870780, year: 2020, description: 'Use supernatural abilities to investigate the shifting Oldest House as Federal Bureau of Control director Jesse Faden.', alt: 'Control Ultimate Edition artwork featuring Jesse Faden' },
-    { id: 27, title: 'Sekiro: Shadows Die Twice - GOTY Edition', genre: 'Action', appId: 814380, year: 2019, description: 'Fight to rescue your kidnapped lord in a challenging action adventure set in a reimagined Sengoku-era Japan.', alt: 'Sekiro: Shadows Die Twice artwork featuring the one-armed shinobi' },
-    { id: 28, title: 'Dark Souls III', genre: 'RPG', appId: 374320, year: 2016, description: 'Face formidable enemies and explore a fading world in the third chapter of FromSoftware’s dark fantasy RPG series.', alt: 'Dark Souls III artwork featuring an ashen knight' },
-    { id: 29, title: 'Monster Hunter Wilds', genre: 'Action', appId: 2246340, year: 2025, description: 'Hunt enormous monsters across changing environments and craft new equipment from your quarry.', alt: 'Monster Hunter Wilds artwork featuring a hunter and monster' },
-    { id: 30, title: 'FINAL FANTASY VII REMAKE INTERGRADE', genre: 'RPG', appId: 1462040, year: 2021, description: 'Return to Midgar with Cloud Strife in a reimagining of the opening chapter, including the INTERmission episode.', alt: 'FINAL FANTASY VII REMAKE INTERGRADE artwork featuring Cloud Strife' },
-    { id: 31, title: 'FINAL FANTASY XVI', genre: 'RPG', appId: 2515020, year: 2024, description: 'Follow Clive Rosfield through a dark fantasy story of warring nations, Dominants, and powerful Eikons.', alt: 'FINAL FANTASY XVI artwork featuring Clive Rosfield' },
-    { id: 32, title: "Assassin's Creed Shadows", genre: 'Action', appId: 3159330, year: 2025, description: 'Experience the stories of shinobi Naoe and samurai Yasuke in feudal Japan.', alt: "Assassin's Creed Shadows artwork featuring Naoe and Yasuke" },
-    { id: 33, title: "Assassin's Creed Valhalla", genre: 'Action', appId: 2208920, year: 2020, description: 'Lead Viking raider Eivor on a quest to settle a clan in England during the Viking Age.', alt: "Assassin's Creed Valhalla artwork featuring Eivor" },
-    { id: 34, title: 'Far Cry 6', genre: 'Shooter', appId: 2369390, year: 2021, description: 'Join the resistance as Dani Rojas and fight to liberate the fictional Caribbean island of Yara.', alt: 'Far Cry 6 artwork featuring Dani Rojas in Yara' },
-    { id: 35, title: 'Dying Light 2 Stay Human: Reloaded Edition', genre: 'Horror', appId: 534380, year: 2022, description: 'Traverse a city overrun by infected using parkour and combat in this open-world survival action game.', alt: 'Dying Light 2 Stay Human artwork featuring a survivor in the city' },
-    { id: 36, title: 'Resident Evil Village', genre: 'Horror', appId: 1196590, year: 2021, description: 'Search a remote village for your daughter in the eighth main installment of the Resident Evil series.', alt: 'Resident Evil Village artwork featuring its remote village' },
-    { id: 37, title: 'Resident Evil 2', genre: 'Horror', appId: 883710, year: 2019, description: 'Survive the Raccoon City outbreak as Leon Kennedy and Claire Redfield in this survival-horror remake.', alt: 'Resident Evil 2 remake artwork featuring Leon Kennedy and Claire Redfield' },
-    { id: 38, title: 'DOOM Eternal', genre: 'Shooter', appId: 782330, year: 2020, description: 'Fight through demonic forces on Earth and beyond in a fast-paced first-person shooter.', alt: 'DOOM Eternal artwork featuring the Doom Slayer' },
-    { id: 39, title: 'Forza Motorsport', genre: 'Racing', appId: 2440510, year: 2023, description: 'Race on a selection of world circuits with a range of cars in this motorsport simulation.', alt: 'Forza Motorsport artwork featuring a race car on track' },
-    { id: 40, title: 'The Elder Scrolls V: Skyrim Special Edition', genre: 'RPG', appId: 489830, year: 2016, description: 'Explore Skyrim, master ancient powers, and shape your path through a vast open-world fantasy RPG.', alt: 'Skyrim Special Edition artwork featuring the Dragonborn' },
-    { id: 41, title: 'Fallout 4', genre: 'RPG', appId: 377160, year: 2015, description: 'Search the post-apocalyptic Commonwealth for your missing child and build settlements in the wasteland.', alt: 'Fallout 4 artwork featuring the Sole Survivor and a wasteland' },
-    { id: 42, title: 'Divinity: Original Sin 2 - Definitive Edition', genre: 'Strategy', appId: 435150, year: 2017, description: 'Build a party of source hunters and shape a reactive fantasy campaign through tactical, turn-based combat.', alt: 'Divinity: Original Sin 2 Definitive Edition artwork featuring its adventuring party' },
-    { id: 43, title: 'Disco Elysium - The Final Cut', genre: 'RPG', appId: 632470, year: 2021, description: 'Investigate a murder as a troubled detective in a role-playing mystery shaped by your choices and skills.', alt: 'Disco Elysium The Final Cut artwork featuring its detective' },
-    { id: 44, title: 'Sid Meier’s Civilization VI', genre: 'Strategy', appId: 289070, year: 2016, description: 'Build a civilization from its earliest settlements and compete for victory across a turn-based strategy campaign.', alt: 'Sid Meier’s Civilization VI artwork featuring a world map' },
-    { id: 45, title: 'Age of Empires IV: Anniversary Edition', genre: 'Strategy', appId: 1466860, year: 2021, description: 'Develop a civilization, gather resources, and command armies in historical real-time strategy battles.', alt: 'Age of Empires IV Anniversary Edition artwork featuring medieval armies' },
-    { id: 46, title: 'Terraria', genre: 'Indie', appId: 105600, year: 2011, description: 'Dig, craft, build, and battle through a two-dimensional world filled with caves and creatures.', alt: 'Terraria artwork featuring its pixel-art world' },
-    { id: 47, title: 'Cuphead', genre: 'Indie', appId: 268910, year: 2017, description: 'Take on a series of challenging boss battles in a hand-drawn run-and-gun adventure inspired by classic cartoons.', alt: 'Cuphead artwork featuring Cuphead and Mugman' },
-    { id: 48, title: 'Celeste', genre: 'Indie', appId: 504230, year: 2018, description: 'Help Madeline climb Celeste Mountain in a precision platform adventure about perseverance.', alt: 'Celeste artwork featuring Madeline climbing the mountain' },
-    { id: 49, title: 'It Takes Two', genre: 'Adventure', appId: 1426210, year: 2021, description: 'Play a cooperative adventure as Cody and May, a couple turned into dolls and navigating imaginative challenges.', alt: 'It Takes Two artwork featuring Cody and May' },
-    { id: 50, title: 'Subnautica', genre: 'Adventure', appId: 264710, year: 2018, description: 'Explore an alien ocean, gather resources, and uncover the mysteries of an underwater world.', alt: 'Subnautica artwork featuring an underwater alien world' }
-  ];
+  const games = window.NexusGaming.games;
 
+  const featuredGameIds = [1, 4, 7, 10, 14];
+  const featuredGames = featuredGameIds
+    .map(id => games.find(game => game.id === id))
+    .filter(game => game && typeof game.title === 'string' && game.title.trim() &&
+      typeof game.genre === 'string' && typeof game.description === 'string');
+  const featuredRotationDelay = 6000;
   const storageKeys = {
     wishlist: 'nexus.wishlist.v1',
     recent: 'nexus.recent.v1',
-    view: 'nexus.view.v1'
+    view: 'nexus.view.v1',
+    comparison: 'nexus.compare.v1'
   };
   const elements = {
     gameCards: document.getElementById('gameCards'),
     trendingCards: document.getElementById('trendingCards'),
+    newReleases: document.getElementById('newReleaseCards'),
     topRated: document.getElementById('topRatedGames'),
     recommended: document.getElementById('recommendedGames'),
     search: document.getElementById('searchBar'),
@@ -81,16 +38,34 @@ document.addEventListener('DOMContentLoaded', () => {
     dialog: document.getElementById('gameDialog'),
     toast: document.getElementById('toastRegion'),
     nav: document.getElementById('mainNavigation'),
-    menuToggle: document.getElementById('menuToggle')
+    menuToggle: document.getElementById('menuToggle'),
+    heroArtwork: document.getElementById('heroArtwork'),
+    heroArtworkSecondary: document.getElementById('heroArtworkSecondary'),
+    heroDots: document.getElementById('heroDots'),
+    heroProgress: document.getElementById('heroProgress'),
+    heroProgressFill: document.getElementById('heroProgressFill'),
+    heroSlideStatus: document.getElementById('heroSlideStatus'),
+    heroRotationToggle: document.getElementById('toggleFeaturedRotation')
   };
   const validIds = new Set(games.map(game => game.id));
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const heroArtworkCache = new Map();
   let state = {
     genre: 'all',
     favoritesOnly: false,
     featuredIndex: 0,
+    heroTimer: 0,
+    heroDeadline: 0,
+    heroRemaining: featuredRotationDelay,
+    heroPausedByUser: false,
+    heroPointerInside: false,
+    heroFocusInside: false,
+    heroArtworkCurrent: elements.heroArtwork,
+    heroRotationInitialized: false,
+    heroAdvancing: false,
+    heroRequest: 0,
     view: readView(),
-    comparison: [],
+    comparison: readIdList(storageKeys.comparison).slice(0, 3),
     favorites: readIdList('favorites'),
     wishlist: readIdList(storageKeys.wishlist),
     recentlyViewed: readIdList(storageKeys.recent).slice(0, 6),
@@ -156,6 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const button = card?.querySelector(`[data-action="${target.action}"]`);
       (button || elements.search).focus();
     });
+    window.addEventListener('storage', event => {
+      if (event.key !== storageKeys.comparison && event.key !== null) return;
+      state.comparison = readIdList(storageKeys.comparison).slice(0, 3);
+      renderComparison();
+      renderGames();
+      renderStaticDiscovery();
+      renderDialogState();
+    });
   }
 
   function scrollBehavior() {
@@ -171,17 +154,249 @@ document.addEventListener('DOMContentLoaded', () => {
     return new URL(imagePath, 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/').href;
   }
 
+  function setArtwork(image, game) {
+    const source = imageUrl(game);
+    image.hidden = false;
+    image.alt = game.alt;
+    image.onerror = () => {
+      if (image.src === source) image.hidden = true;
+    };
+    image.src = source;
+  }
+
   function makeArtwork(game, className, loading = 'lazy') {
     const image = document.createElement('img');
     image.className = className;
-    image.src = imageUrl(game);
-    image.alt = game.alt;
     image.loading = loading;
     image.decoding = 'async';
-    image.addEventListener('error', () => {
-      image.hidden = true;
-    }, { once: true });
+    setArtwork(image, game);
     return image;
+  }
+
+  function preloadHeroArtwork(game) {
+    if (!game || !Number.isInteger(game.appId)) return Promise.resolve(false);
+    const url = imageUrl(game);
+    if (heroArtworkCache.has(url)) return heroArtworkCache.get(url);
+
+    const image = new Image();
+    const result = new Promise(resolve => {
+      image.addEventListener('load', () => resolve(image.naturalWidth > 0), { once: true });
+      image.addEventListener('error', () => resolve(false), { once: true });
+      image.src = url;
+      if (image.complete) resolve(image.naturalWidth > 0);
+    }).then(loaded => {
+      if (!loaded) heroArtworkCache.delete(url);
+      return loaded;
+    });
+    heroArtworkCache.set(url, result);
+    return result;
+  }
+
+  function renderFeaturedContent() {
+    const game = featuredGames[state.featuredIndex];
+    if (!game) return;
+
+    document.getElementById('heroGenre').textContent = game.genre;
+    document.getElementById('heroTitle').textContent = game.title;
+    document.getElementById('heroDescription').textContent = game.description;
+    const rating = document.getElementById('heroRating');
+    rating.textContent = Number.isFinite(game.rating) ? `★ ${game.rating.toFixed(1)} / 5` : '';
+    rating.hidden = !Number.isFinite(game.rating);
+    const year = document.getElementById('heroYear');
+    year.textContent = Number.isFinite(game.year) ? String(game.year) : '';
+    year.hidden = !Number.isFinite(game.year);
+    document.querySelector('.hero-meta').hidden = !Number.isFinite(game.rating) && !Number.isFinite(game.year);
+    document.querySelector('.meta-divider').hidden = !Number.isFinite(game.rating) || !Number.isFinite(game.year);
+
+    const saveButton = document.getElementById('saveFeatured');
+    const saved = state.favorites.includes(game.id);
+    saveButton.textContent = saved ? '♥ Saved' : '♡ Save game';
+    saveButton.setAttribute('aria-pressed', String(saved));
+    elements.heroSlideStatus.textContent = `Slide ${state.featuredIndex + 1} of ${featuredGames.length}: ${game.title}`;
+
+    const dots = featuredGames.map((item, index) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'hero-dot';
+      dot.dataset.featuredIndex = String(index);
+      dot.setAttribute('aria-label', `Show featured game ${index + 1}: ${item.title}`);
+      dot.setAttribute('aria-pressed', String(index === state.featuredIndex));
+      return dot;
+    });
+    elements.heroDots.replaceChildren(...dots);
+  }
+
+  function updateFeaturedArtwork(game) {
+    if (state.heroArtworkCurrent.dataset.gameId !== String(game.id)) {
+      const previous = state.heroArtworkCurrent;
+      const next = previous === elements.heroArtwork ? elements.heroArtworkSecondary : elements.heroArtwork;
+      next.hidden = false;
+      setArtwork(next, game);
+      next.dataset.gameId = String(game.id);
+      next.classList.remove('is-current');
+      next.setAttribute('aria-hidden', 'true');
+      next.alt = '';
+      next.addEventListener('error', () => {
+        if (state.heroArtworkCurrent !== next) return;
+        state.heroArtworkCurrent = previous;
+      }, { once: true });
+      if (reducedMotion.matches) {
+        previous.classList.remove('is-current');
+        previous.hidden = true;
+        previous.alt = '';
+        previous.setAttribute('aria-hidden', 'true');
+        next.classList.add('is-current');
+        next.removeAttribute('aria-hidden');
+        next.alt = game.alt || `${game.title} artwork`;
+      } else {
+        state.heroArtworkCurrent = next;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (state.heroArtworkCurrent !== next) return;
+          previous.classList.remove('is-current');
+          next.classList.add('is-current');
+          next.removeAttribute('aria-hidden');
+          next.alt = game.alt || `${game.title} artwork`;
+        }));
+        next.addEventListener('transitionend', event => {
+          if (event.propertyName !== 'opacity' || previous === state.heroArtworkCurrent) return;
+          previous.hidden = true;
+          previous.alt = '';
+          previous.setAttribute('aria-hidden', 'true');
+        }, { once: true });
+      }
+      if (reducedMotion.matches) state.heroArtworkCurrent = next;
+    } else {
+      state.heroArtworkCurrent.alt = game.alt || `${game.title} artwork`;
+      state.heroArtworkCurrent.removeAttribute('aria-hidden');
+      state.heroArtworkCurrent.hidden = false;
+    }
+  }
+
+  function updateFeatured() {
+    const game = featuredGames[state.featuredIndex];
+    if (!game) return;
+    renderFeaturedContent();
+    if (!state.heroArtworkCurrent.dataset.gameId) {
+      setArtwork(state.heroArtworkCurrent, game);
+      state.heroArtworkCurrent.dataset.gameId = String(game.id);
+      state.heroArtworkCurrent.classList.add('is-current');
+    } else {
+      updateFeaturedArtwork(game);
+    }
+  }
+
+  async function showFeatured(index, automatic = false) {
+    const game = featuredGames[index];
+    if (!game) return false;
+    const request = ++state.heroRequest;
+    if (index !== state.featuredIndex && !(await preloadHeroArtwork(game))) return false;
+    if (request !== state.heroRequest || (automatic && !canRotateFeatured())) return false;
+
+    state.featuredIndex = index;
+    renderFeaturedContent();
+    updateFeaturedArtwork(game);
+    const nextGame = featuredGames[(index + 1) % featuredGames.length];
+    if (nextGame && nextGame.id !== game.id) preloadHeroArtwork(nextGame);
+    return true;
+  }
+
+  function canRotateFeatured() {
+    return featuredGames.length > 1 && !state.heroPausedByUser &&
+      !state.heroPointerInside && !state.heroFocusInside &&
+      !document.hidden && !reducedMotion.matches;
+  }
+
+  function updateFeaturedProgress(remaining, transition = 0) {
+    const elapsed = Math.min(featuredRotationDelay, Math.max(0, featuredRotationDelay - remaining));
+    elements.heroProgress.setAttribute('aria-valuenow', (elapsed / 1000).toFixed(1));
+    elements.heroProgress.setAttribute('aria-valuetext', `${Math.ceil(remaining / 1000)} seconds until next featured game`);
+    elements.heroProgressFill.style.transitionDuration = `${transition}ms`;
+    elements.heroProgressFill.style.transform = `scaleX(${elapsed / featuredRotationDelay})`;
+  }
+
+  function clearFeaturedTimer() {
+    if (!state.heroTimer) return;
+    window.clearTimeout(state.heroTimer);
+    state.heroTimer = 0;
+  }
+
+  function pauseFeaturedRotation() {
+    if (state.heroTimer) {
+      state.heroRemaining = Math.max(0, state.heroDeadline - Date.now());
+      clearFeaturedTimer();
+      state.heroDeadline = 0;
+    }
+    if (state.heroAdvancing) state.heroRequest += 1;
+    updateFeaturedProgress(state.heroRemaining);
+  }
+
+  function advanceFeaturedAutomatically() {
+    if (state.heroAdvancing || !canRotateFeatured()) return;
+    state.heroAdvancing = true;
+    const startIndex = state.featuredIndex;
+    (async () => {
+      for (let offset = 1; offset < featuredGames.length; offset += 1) {
+        if (!canRotateFeatured()) break;
+        const nextIndex = (startIndex + offset) % featuredGames.length;
+        if (await showFeatured(nextIndex, true)) break;
+      }
+    })().finally(() => {
+      state.heroAdvancing = false;
+      state.heroRemaining = featuredRotationDelay;
+      state.heroDeadline = 0;
+      scheduleFeaturedRotation();
+    });
+  }
+
+  function scheduleFeaturedRotation() {
+    clearFeaturedTimer();
+    if (!canRotateFeatured()) {
+      updateFeaturedProgress(state.heroRemaining);
+      return;
+    }
+    if (state.heroRemaining <= 0 || state.heroRemaining > featuredRotationDelay) {
+      state.heroRemaining = featuredRotationDelay;
+    }
+    state.heroDeadline = Date.now() + state.heroRemaining;
+
+    const tick = () => {
+      const remaining = Math.max(0, state.heroDeadline - Date.now());
+      updateFeaturedProgress(remaining, Math.min(1000, state.heroRemaining - remaining));
+      if (remaining <= 0) {
+        state.heroRemaining = 0;
+        state.heroDeadline = 0;
+        advanceFeaturedAutomatically();
+        return;
+      }
+      state.heroRemaining = remaining;
+      state.heroTimer = window.setTimeout(tick, Math.min(1000, remaining));
+    };
+    state.heroTimer = window.setTimeout(tick, Math.min(1000, state.heroRemaining));
+  }
+
+  function updateFeaturedRotationState() {
+    const paused = !canRotateFeatured();
+    if (paused) {
+      pauseFeaturedRotation();
+    } else {
+      scheduleFeaturedRotation();
+    }
+    elements.heroRotationToggle.hidden = reducedMotion.matches || featuredGames.length < 2;
+    elements.heroProgress.hidden = reducedMotion.matches || featuredGames.length < 2;
+    elements.heroRotationToggle.setAttribute('aria-label', state.heroPausedByUser
+      ? 'Resume automatic slide rotation'
+      : 'Pause automatic slide rotation');
+    elements.heroRotationToggle.setAttribute('aria-pressed', String(state.heroPausedByUser));
+    elements.heroRotationToggle.textContent = state.heroPausedByUser ? '▶' : 'Ⅱ';
+  }
+
+  function initializeFeaturedCarousel() {
+    if (state.heroRotationInitialized || !featuredGames.length) return;
+    state.heroRotationInitialized = true;
+    state.featuredIndex = 0;
+    updateFeatured();
+    preloadHeroArtwork(featuredGames[(state.featuredIndex + 1) % featuredGames.length]);
+    updateFeaturedRotationState();
   }
 
   function announce(message) {
@@ -275,7 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
     genre.className = 'game-genre';
     genre.textContent = game.genre;
     const title = document.createElement('h3');
-    title.textContent = game.title;
+    const titleLink = document.createElement('a');
+    titleLink.href = `game.html?id=${encodeURIComponent(game.id)}`;
+    titleLink.textContent = game.title;
+    title.append(titleLink);
     const metadata = document.createElement('div');
     metadata.className = 'card-meta';
     const year = document.createElement('span');
@@ -290,6 +508,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actions = document.createElement('div');
     actions.className = 'card-actions';
+    const compareButton = makeActionButton(
+      state.comparison.includes(game.id) ? '✓ Compare' : '＋ Compare',
+      'details-button compare-card-button',
+      'compare',
+      state.comparison.includes(game.id),
+      `${state.comparison.includes(game.id) ? 'Remove' : 'Add'} ${game.title} ${state.comparison.includes(game.id) ? 'from' : 'to'} comparison`
+    );
+    compareButton.disabled = !state.comparison.includes(game.id) && state.comparison.length >= 3;
     actions.append(
       makeActionButton(
         state.favorites.includes(game.id) ? '♥ Saved' : '♡ Favourite',
@@ -306,13 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `${state.wishlist.includes(game.id) ? 'Remove' : 'Add'} ${game.title} ${state.wishlist.includes(game.id) ? 'from' : 'to'} wishlist`
       ),
       makeActionButton('Details', 'details-button', 'details', null, `View details for ${game.title}`),
-      makeActionButton(
-        state.comparison.includes(game.id) ? '✓ Compare' : '＋ Compare',
-        'details-button compare-card-button',
-        'compare',
-        state.comparison.includes(game.id),
-        `${state.comparison.includes(game.id) ? 'Remove' : 'Add'} ${game.title} ${state.comparison.includes(game.id) ? 'from' : 'to'} comparison`
-      )
+      compareButton
     );
     content.append(genre, title, metadata, actions);
     card.append(cover, content);
@@ -445,8 +665,6 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.clearSearch.hidden = !elements.search.value;
     elements.favoritesFilter.classList.toggle('active', state.favoritesOnly);
     elements.favoritesFilter.setAttribute('aria-pressed', String(state.favoritesOnly));
-    elements.savedGames.classList.toggle('active', state.favoritesOnly);
-    elements.savedGames.setAttribute('aria-pressed', String(state.favoritesOnly));
     elements.savedGames.setAttribute('aria-label', `Show saved games, ${state.favorites.length} saved`);
     elements.savedCount.textContent = String(state.favorites.length);
     document.querySelector('.year-control').classList.toggle('has-value', elements.year.value !== 'all');
@@ -469,6 +687,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     elements.trendingCards.replaceChildren(...sorted.slice(0, 4).map(game => makeCard(game, { compact: true })));
     elements.topRated.replaceChildren(...sorted.filter(game => Number.isFinite(game.rating)).slice(0, 4).map(game => makeMiniGame(game)));
+    const recentReleases = [...games]
+      .filter(game => Number.isFinite(game.year))
+      .sort((first, second) => second.year - first.year || first.title.localeCompare(second.title))
+      .slice(0, 4);
+    elements.newReleases.replaceChildren(...recentReleases.map(game => makeCard(game, { compact: true })));
   }
 
   function renderRecommendations() {
@@ -503,14 +726,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderComparison() {
     const selected = state.comparison.map(gameById).filter(Boolean);
+    document.querySelectorAll('[data-compare-count]').forEach(element => {
+      element.textContent = String(selected.length);
+      element.setAttribute('aria-label', `${selected.length} ${selected.length === 1 ? 'game' : 'games'} selected for comparison`);
+    });
     elements.compareTray.hidden = !selected.length;
     elements.compareTray.textContent = '';
     if (selected.length) {
       const message = document.createElement('span');
       message.textContent = `${selected.length} selected for comparison`;
       const jump = document.createElement('a');
-      jump.href = '#comparison';
-      jump.textContent = 'Compare now ↓';
+      jump.href = 'compare.html';
+      jump.textContent = 'Open comparison →';
       elements.compareTray.append(message, jump);
     }
     if (selected.length < 2) {
@@ -581,6 +808,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dialogWishlist').textContent = wishlisted ? '✓ In wishlist' : '＋ Add to wishlist';
     document.getElementById('dialogWishlist').setAttribute('aria-pressed', String(wishlisted));
     document.getElementById('dialogCompare').textContent = state.comparison.includes(game.id) ? '✓ Comparing' : '＋ Compare';
+    document.getElementById('dialogCompare').setAttribute('aria-pressed', String(state.comparison.includes(game.id)));
+    document.getElementById('dialogCompare').disabled = !state.comparison.includes(game.id) && state.comparison.length >= 3;
   }
 
   function renderPurchaseOffers(game) {
@@ -595,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const offers = candidates.filter((offer, index) => {
-      if (!offer || typeof offer !== 'object' || offer.verified !== true ||
+      if (!offer || typeof offer !== 'object' || Array.isArray(offer) || offer.verified !== true ||
           typeof offer.retailer !== 'string' || !offer.retailer.trim() ||
           typeof offer.url !== 'string' || offer.url.trim() !== offer.url ||
           /[\u0000-\u001f\u007f]/.test(offer.url) ||
@@ -624,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
       item.className = 'purchase-offer';
       const link = document.createElement('a');
       link.className = 'purchase-button';
-      link.href = offer.url;
+      link.setAttribute('href', offer.url);
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.textContent = `Buy Game · ${offer.retailer.trim()}`;
@@ -632,6 +861,24 @@ document.addEventListener('DOMContentLoaded', () => {
       type.className = 'purchase-type';
       type.textContent = offer.type === 'affiliate' ? 'Affiliate link' : 'Retailer link';
       item.append(link, type);
+
+      if (typeof offer.price === 'string' && offer.price.trim()) {
+        const price = document.createElement('span');
+        price.className = 'purchase-price';
+        price.textContent = offer.price.trim();
+        item.append(price);
+      } else if (offer.price !== undefined) {
+        console.warn(`Ignoring invalid price for purchase offer at "${game.title}".`);
+      }
+
+      if (typeof offer.availability === 'string' && offer.availability.trim()) {
+        const availability = document.createElement('span');
+        availability.className = 'purchase-availability';
+        availability.textContent = offer.availability.trim();
+        item.append(availability);
+      } else if (offer.availability !== undefined) {
+        console.warn(`Ignoring invalid availability for purchase offer at "${game.title}".`);
+      }
 
       if (offer.type === 'affiliate') {
         const disclosure = document.createElement('p');
@@ -649,10 +896,8 @@ document.addEventListener('DOMContentLoaded', () => {
     state.dialogGame = game;
     state.dialogOpener = opener || document.activeElement;
     const artwork = document.getElementById('dialogArtwork');
-    artwork.hidden = false;
-    artwork.src = imageUrl(game);
-    artwork.alt = game.alt;
-    artwork.addEventListener('error', () => { artwork.hidden = true; }, { once: true });
+    artwork.loading = 'eager';
+    setArtwork(artwork, game);
     document.getElementById('dialogGenre').textContent = game.genre;
     document.getElementById('dialogTitle').textContent = game.title;
     document.getElementById('dialogRating').textContent = Number.isFinite(game.rating)
@@ -672,15 +917,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleComparison(id) {
     const focusTarget = captureCardActionFocus();
-    if (state.comparison.includes(id)) {
-      state.comparison = state.comparison.filter(item => item !== id);
-    } else if (state.comparison.length >= 3) {
+    const current = readIdList(storageKeys.comparison);
+    if (!current.includes(id) && current.length >= 3) {
       announce('Compare up to three games at a time.');
       return;
-    } else {
-      state.comparison = [...state.comparison, id];
-      announce('Added to comparison.');
     }
+    const next = current.includes(id) ? current.filter(item => item !== id) : [...current, id];
+    if (!writeIdList(storageKeys.comparison, next)) return;
+    state.comparison = next;
+    announce(current.includes(id) ? 'Removed from comparison.' : 'Added to comparison.');
     renderComparison();
     renderGames();
     renderStaticDiscovery();
@@ -710,35 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (button.dataset.action === 'remove-compare') toggleComparison(id);
       return;
     }
-    if (game) openDetails(game, card);
-  }
-
-  function updateFeatured() {
-    const game = games[state.featuredIndex];
-    const artwork = document.getElementById('heroArtwork');
-    artwork.hidden = false;
-    artwork.src = imageUrl(game);
-    artwork.alt = game.alt;
-    artwork.addEventListener('error', () => { artwork.hidden = true; }, { once: true });
-    document.getElementById('heroGenre').textContent = game.genre;
-    document.getElementById('heroTitle').textContent = game.title;
-    document.getElementById('heroDescription').textContent = game.description;
-    document.getElementById('heroRating').textContent = `★ ${game.rating.toFixed(1)} / 5`;
-    document.getElementById('heroYear').textContent = String(game.year);
-    const saveButton = document.getElementById('saveFeatured');
-    const saved = state.favorites.includes(game.id);
-    saveButton.textContent = saved ? '♥ Saved' : '♡ Save game';
-    saveButton.setAttribute('aria-pressed', String(saved));
-    const dots = games.slice(0, 5).map((item, index) => {
-      const dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'hero-dot';
-      dot.dataset.featuredIndex = String(index);
-      dot.setAttribute('aria-label', `Feature ${item.title}`);
-      dot.setAttribute('aria-pressed', String(index === state.featuredIndex));
-      return dot;
-    });
-    document.getElementById('heroDots').replaceChildren(...dots);
+    if (game) window.location.href = `game.html?id=${encodeURIComponent(game.id)}`;
   }
 
   function setGenre(genre) {
@@ -779,11 +996,6 @@ document.addEventListener('DOMContentLoaded', () => {
     state.favoritesOnly = !state.favoritesOnly;
     renderGames();
   });
-  elements.savedGames.addEventListener('click', () => {
-    state.favoritesOnly = !state.favoritesOnly;
-    renderGames();
-    document.getElementById('games').scrollIntoView({ behavior: scrollBehavior() });
-  });
   document.getElementById('clearFilters').addEventListener('click', clearFilters);
   elements.genreFilters.addEventListener('click', event => {
     const button = event.target.closest('[data-genre-value]');
@@ -793,12 +1005,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = event.target.closest('[data-genre-value]');
     if (button) setGenre(button.dataset.genreValue);
   });
-  [elements.gameCards, elements.trendingCards, elements.topRated, elements.recommended, elements.myFavorites, elements.myWishlist, elements.recent].forEach(container => {
+  [elements.gameCards, elements.trendingCards, elements.newReleases, elements.topRated, elements.recommended, elements.myFavorites, elements.myWishlist, elements.recent].forEach(container => {
     container.addEventListener('click', handleCardAction);
     container.addEventListener('keydown', event => {
       if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('.game-card')) {
         event.preventDefault();
-        openDetails(gameById(Number(event.target.dataset.gameId)), event.target);
+        window.location.href = `game.html?id=${encodeURIComponent(event.target.dataset.gameId)}`;
       }
     });
   });
@@ -807,15 +1019,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (action?.dataset.action === 'clear-filters') clearFilters();
   });
   document.getElementById('clearComparison').addEventListener('click', () => {
+    if (!writeIdList(storageKeys.comparison, [])) return;
     state.comparison = [];
     renderComparison();
     renderGames();
     renderStaticDiscovery();
   });
   document.getElementById('clearRecent').addEventListener('click', clearRecentlyViewed);
-  elements.compareTray.addEventListener('click', event => {
-    if (event.target.matches('a')) document.getElementById('comparison').scrollIntoView({ behavior: scrollBehavior() });
-  });
   elements.compareContent.addEventListener('click', event => {
     const remove = event.target.closest('[data-action="remove-compare"]');
     if (remove) toggleComparison(Number(remove.dataset.gameId));
@@ -824,24 +1034,61 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('exploreFeatured').addEventListener('click', event => {
-    openDetails(games[state.featuredIndex], event.currentTarget);
+    openDetails(featuredGames[state.featuredIndex], event.currentTarget);
   });
-  document.getElementById('saveFeatured').addEventListener('click', () => setFavorite(games[state.featuredIndex].id));
+  document.getElementById('saveFeatured').addEventListener('click', () => {
+    const game = featuredGames[state.featuredIndex];
+    if (game) setFavorite(game.id);
+  });
+  function selectFeatured(index) {
+    if (!featuredGames.length) return;
+    state.heroRemaining = featuredRotationDelay;
+    state.heroDeadline = 0;
+    state.heroRequest += 1;
+    clearFeaturedTimer();
+    showFeatured((index + featuredGames.length) % featuredGames.length).finally(() => {
+      state.heroRemaining = featuredRotationDelay;
+      scheduleFeaturedRotation();
+    });
+  }
   document.getElementById('previousFeatured').addEventListener('click', () => {
-    state.featuredIndex = (state.featuredIndex - 1 + 5) % 5;
-    updateFeatured();
+    selectFeatured(state.featuredIndex - 1);
   });
   document.getElementById('nextFeatured').addEventListener('click', () => {
-    state.featuredIndex = (state.featuredIndex + 1) % 5;
-    updateFeatured();
+    selectFeatured(state.featuredIndex + 1);
   });
-  document.getElementById('heroDots').addEventListener('click', event => {
+  elements.heroDots.addEventListener('click', event => {
     const dot = event.target.closest('[data-featured-index]');
-    if (dot) {
-      state.featuredIndex = Number(dot.dataset.featuredIndex);
-      updateFeatured();
-    }
+    if (dot) selectFeatured(Number(dot.dataset.featuredIndex));
   });
+  elements.heroRotationToggle.addEventListener('click', () => {
+    state.heroPausedByUser = !state.heroPausedByUser;
+    updateFeaturedRotationState();
+  });
+  const hero = document.querySelector('.featured-hero');
+  hero.addEventListener('pointerenter', () => {
+    state.heroPointerInside = true;
+    updateFeaturedRotationState();
+  });
+  hero.addEventListener('pointerleave', () => {
+    state.heroPointerInside = false;
+    updateFeaturedRotationState();
+  });
+  hero.addEventListener('focusin', () => {
+    state.heroFocusInside = true;
+    updateFeaturedRotationState();
+  });
+  hero.addEventListener('focusout', event => {
+    if (hero.contains(event.relatedTarget)) return;
+    state.heroFocusInside = false;
+    updateFeaturedRotationState();
+  });
+  document.addEventListener('visibilitychange', updateFeaturedRotationState);
+  if (typeof reducedMotion.addEventListener === 'function') {
+    reducedMotion.addEventListener('change', updateFeaturedRotationState);
+  } else {
+    reducedMotion.addListener(updateFeaturedRotationState);
+  }
   document.getElementById('dialogFavorite').addEventListener('click', () => {
     if (state.dialogGame) setFavorite(state.dialogGame.id);
   });
@@ -948,4 +1195,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGenreControls();
   elements.gameCards.classList.toggle('list-view', state.view === 'list');
   renderAll();
+  initializeFeaturedCarousel();
 });
