@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090a12">
+  <meta name="description" content="Discover your next favourite game in the Nexus Gaming library.">
+  <title>Nexus Gaming | Discover Your Next Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link visually-hidden" href="#mainContent">Skip to main content</a>
+  <header class="navbar" id="home">
+    <a class="logo" href="#home" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation">
+      <a href="#discover">Discover</a>
+      <a href="#trending">Featured picks</a>
+      <a href="#topRated">Top Rated</a>
+      <a href="#games">Games Library</a>
+      <a href="#myGames">My Games</a>
+    </nav>
+    <div class="header-actions">
+      <button class="saved-link" id="savedGamesButton" type="button" aria-pressed="false">
+        <span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" id="savedCount">0</span>
+      </button>
+      <div class="search-container">
+        <label class="visually-hidden" for="searchBar">Search games by title, genre, description, or year</label>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input type="search" id="searchBar" placeholder="Search games..." autocomplete="off">
+        <button class="search-clear" id="clearSearch" type="button" aria-label="Clear search" hidden>×</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <section class="hero featured-hero" id="discover" aria-labelledby="heroTitle">
+      <img class="hero-art" id="heroArtwork" alt="" fetchpriority="high">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow"><span></span> CURATED FEATURE</p>
+        <p class="hero-feature-genre" id="heroGenre"></p>
+        <h1 id="heroTitle"></h1>
+        <p class="hero-description" id="heroDescription"></p>
+        <div class="hero-meta"><span class="hero-rating" id="heroRating"></span><span class="meta-divider"></span><span id="heroYear"></span></div>
+        <div class="hero-actions">
+          <button class="cta-button" id="exploreFeatured" type="button">Explore Game <span aria-hidden="true">↗</span></button>
+          <button class="hero-save" id="saveFeatured" type="button"></button>
+        </div>
+      </div>
+      <div class="hero-art-caption"><span class="live-dot"></span> EDITOR'S PICK</div>
+      <div class="hero-controls">
+        <button id="previousFeatured" type="button" aria-label="Previous featured game">←</button>
+        <div class="hero-dots" id="heroDots" role="group" aria-label="Choose featured game"></div>
+        <button id="nextFeatured" type="button" aria-label="Next featured game">→</button>
+      </div>
+    </section>
+
+    <section class="genre-section" aria-labelledby="genreTitle">
+      <div class="section-heading">
+        <div><p class="eyebrow">FIND YOUR NEXT OBSESSION</p><h2 id="genreTitle">Browse by genre<span class="heading-period">.</span></h2></div>
+      </div>
+      <div class="genre-browser" id="genreBrowser"></div>
+    </section>
+
+    <section class="trending-section" id="trending" aria-labelledby="trendingTitle">
+      <div class="section-heading trending-heading">
+        <div><p class="eyebrow">SELECTED FROM THE NEXUS LIBRARY</p><h2 id="trendingTitle">Featured picks<span class="heading-period">.</span></h2></div>
+        <a class="section-link" href="#games">Explore library <span aria-hidden="true">↘</span></a>
+      </div>
+      <div class="trending-cards" id="trendingCards"></div>
+    </section>
+
+    <section class="discovery-row" aria-label="Game discovery">
+      <section class="discovery-panel" id="topRated" aria-labelledby="topRatedTitle">
+        <div class="section-heading compact-heading">
+          <div><p class="eyebrow">HIGHEST SCORES</p><h2 id="topRatedTitle">Top rated<span class="heading-period">.</span></h2></div>
+          <a class="section-link" href="#games" data-sort-link="rating">View all <span aria-hidden="true">↘</span></a>
+        </div>
+        <div class="mini-game-list" id="topRatedGames"></div>
+      </section>
+      <section class="discovery-panel recommendations-panel" aria-labelledby="recommendTitle">
+        <div class="section-heading compact-heading">
+          <div><p class="eyebrow">BASED ON YOUR SAVED GAMES</p><h2 id="recommendTitle">For your next run<span class="heading-period">.</span></h2></div>
+        </div>
+        <div class="mini-game-list" id="recommendedGames"></div>
+      </section>
+    </section>
+
+    <section class="my-games-section" id="myGames" aria-labelledby="myGamesTitle">
+      <div class="section-heading">
+        <div><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h2 id="myGamesTitle">My Games<span class="heading-period">.</span></h2></div>
+        <p class="local-note">Saved only in this browser on this device.</p>
+      </div>
+      <div class="personal-grid">
+        <section class="personal-panel" aria-labelledby="favoritesTitle">
+          <div class="personal-heading"><h3 id="favoritesTitle">Favourites</h3><span class="personal-count" id="myFavoriteCount">0</span></div>
+          <div class="personal-games" id="myFavorites"></div>
+        </section>
+        <section class="personal-panel" aria-labelledby="wishlistTitle">
+          <div class="personal-heading"><h3 id="wishlistTitle">Wishlist</h3><span class="personal-count" id="wishlistCount">0</span></div>
+          <div class="personal-games" id="myWishlist"></div>
+        </section>
+        <section class="personal-panel" aria-labelledby="recentTitle">
+          <div class="personal-heading"><h3 id="recentTitle">Recently viewed</h3><span class="personal-count" id="recentCount">0</span><button class="mini-clear" id="clearRecent" type="button">Clear</button></div>
+          <div class="personal-games" id="recentlyViewed"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="comparison-section" id="comparison" aria-labelledby="comparisonTitle">
+      <div class="section-heading">
+        <div><p class="eyebrow">SIDE-BY-SIDE</p><h2 id="comparisonTitle">Compare games<span class="heading-period">.</span></h2></div>
+        <button class="clear-filters" id="clearComparison" type="button">Clear comparison</button>
+      </div>
+      <p class="comparison-hint">Add up to three games to compare their available details.</p>
+      <div class="comparison-content" id="comparisonContent"></div>
+    </section>
+
+    <section class="game-section" id="games" aria-labelledby="gamesTitle">
+      <div class="filters">
+        <div class="section-heading">
+          <div><p class="eyebrow">THE FULL COLLECTION</p><h2 id="gamesTitle">Explore the library<span class="heading-period">.</span></h2></div>
+          <p id="resultsCount" class="results-count" aria-live="polite"></p>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">GENRE</span>
+          <div class="filter-buttons" id="genreFilters" role="group" aria-label="Filter games by genre"></div>
+        </div>
+        <div class="library-controls">
+          <label class="sort-control">SORT BY
+            <select id="sortGames" aria-label="Sort games">
+              <option value="rating-desc">Rating: highest first</option>
+              <option value="title-asc">Title: A–Z</option>
+              <option value="title-desc">Title: Z–A</option>
+              <option value="year-desc">Year: newest first</option>
+              <option value="year-asc">Year: oldest first</option>
+            </select>
+          </label>
+          <label class="year-control">YEAR
+            <select id="yearFilter" aria-label="Filter by release year"><option value="all">All years</option></select>
+          </label>
+          <label class="rating-control">MIN RATING
+            <select id="ratingFilter" aria-label="Filter by minimum rating">
+              <option value="0">Any rating</option>
+              <option value="4.5">4.5 and above</option>
+              <option value="4.8">4.8 and above</option>
+            </select>
+          </label>
+          <button class="filter-btn favorites-filter" id="favoritesFilter" type="button" aria-pressed="false">♡ Favourites only</button>
+          <div class="view-toggle" role="group" aria-label="Choose library view">
+            <button type="button" data-view="grid" aria-pressed="true" aria-label="Grid view">▦</button>
+            <button type="button" data-view="list" aria-pressed="false" aria-label="Compact list view">☰</button>
+          </div>
+          <button class="clear-filters" id="clearFilters" type="button">Clear filters</button>
+        </div>
+      </div>
+      <div class="game-cards" id="gameCards"></div>
+      <div class="compare-tray" id="compareTray" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <a class="logo footer-logo" href="#home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
+    <p class="footer-description">A curated guide to your next great game.</p>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="#discover">Discover</a><a href="#trending">Featured picks</a><a href="#games">Game library</a><a href="#myGames">My Games</a><a href="#home">Back to top ↑</a>
+    </nav>
+    <span class="copyright">&copy; <span id="currentYear"></span> Nexus Gaming <span class="footer-separator">·</span> Your saved games stay on this device.<span class="rating-disclaimer">Only the original eight games show legacy ratings; their sources are unverified.</span></span>
+  </footer>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog class="game-dialog" id="gameDialog" aria-labelledby="dialogTitle">
+    <button class="dialog-close" id="closeDialog" type="button" aria-label="Close game details">×</button>
+    <div class="dialog-art-wrap"><img class="dialog-art" id="dialogArtwork" alt=""></div>
+    <div class="dialog-content">
+      <p class="eyebrow dialog-genre" id="dialogGenre"></p>
+      <h2 id="dialogTitle"></h2>
+      <p class="dialog-rating" id="dialogRating"></p>
+      <p class="dialog-description" id="dialogDescription"></p>
+      <section class="dialog-purchase" aria-labelledby="purchaseTitle">
+        <h3 id="purchaseTitle">Purchase options</h3>
+        <p class="purchase-empty" id="purchaseEmpty">Purchase links coming soon.</p>
+        <div class="purchase-offers" id="purchaseOffers"></div>
+      </section>
+      <div class="dialog-actions">
+        <button class="favorite-btn dialog-favorite" id="dialogFavorite" type="button"></button>
+        <button class="details-button" id="dialogWishlist" type="button"></button>
+        <button class="details-button" id="dialogCompare" type="button">＋ Compare</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
