@@ -303,9 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
         link.className = 'genre-tile page-genre-tile';
         link.href = `games.html?genre=${encodeURIComponent(name)}`;
         link.setAttribute('aria-label', `Explore ${name}, ${genreGames.length} ${genreGames.length === 1 ? 'game' : 'games'}`);
+        const artworkFrame = document.createElement('span');
+        artworkFrame.className = 'page-genre-artwork';
+        artworkFrame.setAttribute('aria-hidden', 'true');
         const artwork = makeArtwork(game, 'genre-art');
         artwork.alt = '';
-        artwork.setAttribute('aria-hidden', 'true');
+        artworkFrame.append(artwork);
+        const content = document.createElement('span');
+        content.className = 'page-genre-content';
         const copy = document.createElement('span');
         copy.className = 'page-genre-copy';
         const title = document.createElement('span');
@@ -319,7 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
         action.className = 'page-genre-action';
         action.setAttribute('aria-hidden', 'true');
         action.textContent = 'Explore ↗';
-        link.append(artwork, copy, action);
+        content.append(copy, action);
+        link.append(artworkFrame, content);
         return link;
       }) : [makeEmpty('No genres match your search', 'Clear search', 'clear-genres', 'Try another genre name.')]));
       countLabel.textContent = `${visible.length} ${visible.length === 1 ? 'genre' : 'genres'}`;

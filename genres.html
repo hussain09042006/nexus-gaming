@@ -23,8 +23,18 @@
     <header class="page-intro"><p class="eyebrow">FIND YOUR KIND OF ADVENTURE</p><h1>Explore by genre<span class="heading-period">.</span></h1><p>Browse categories based on the existing game catalog. Each count reflects the titles currently listed.</p></header>
     <section class="genre-page-section" aria-label="Game genres">
       <div class="genre-tools" role="search">
-        <label for="genreSearch">Search genres</label><input id="genreSearch" type="search" placeholder="Find a genre">
-        <label for="genreSort">Sort by</label><select id="genreSort"><option value="name-asc">Name, A–Z</option><option value="count-desc">Most games</option><option value="count-asc">Fewest games</option></select>
+      <label class="genre-search-field" for="genreSearch">
+        Search genres
+        <input id="genreSearch" type="search" placeholder="Find a genre">
+      </label>
+      <label class="genre-sort-field" for="genreSort">
+        Sort by
+        <select id="genreSort">
+          <option value="name-asc">Name, A–Z</option>
+          <option value="count-desc">Most games</option>
+          <option value="count-asc">Fewest games</option>
+        </select>
+      </label>
         <button class="clear-filters" id="clearGenreSearch" type="button" hidden>Clear search</button>
         <p id="genreCount" class="results-count" aria-live="polite"></p>
       </div>
