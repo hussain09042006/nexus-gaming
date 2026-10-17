@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hussain09042006.github.io/nexus-gaming/sitemap.xml
