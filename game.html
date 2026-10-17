@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090a12">
-  <meta name="description" content="View game information and verified purchase offers in the Nexus Gaming catalog.">
+  <meta name="description" content="Explore game details, related titles, and verified purchase offers in the Nexus Gaming catalog.">
   <link rel="canonical" href="https://hussain09042006.github.io/nexus-gaming/game.html">
   <meta property="og:type" content="website"><meta property="og:site_name" content="Nexus Gaming"><meta property="og:title" content="Game Details | Nexus Gaming"><meta property="og:description" content="Game information from the Nexus Gaming catalog."><meta property="og:url" content="https://hussain09042006.github.io/nexus-gaming/game.html">
   <meta name="twitter:card" content="summary"><title>Game Details | Nexus Gaming</title>
@@ -16,7 +16,7 @@
   <header class="navbar">
     <a class="logo" href="index.html" aria-label="Nexus Gaming home"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
     <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNavigation" aria-label="Open navigation"><span></span><span></span><span></span></button>
-    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation"><a href="index.html" data-nav-page="home">Home</a><a href="games.html" data-nav-page="games">Library</a><a href="genres.html" data-nav-page="genres">Genres</a><a href="my-games.html" data-nav-page="my-games">My Games</a><a href="store.html" data-nav-page="store">Store</a><a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a></nav>
+    <nav class="nav-links" id="mainNavigation" aria-label="Main navigation"><a href="index.html" data-nav-page="home">Home</a><a href="games.html" data-nav-page="games">Library</a><a href="free-games.html" data-nav-page="free-games">Free Games</a><a href="genres.html" data-nav-page="genres">Genres</a><a href="my-games.html" data-nav-page="my-games">My Games</a><a href="store.html" data-nav-page="store">Store</a><a href="compare.html" data-nav-page="compare">Compare <span class="nav-count" data-compare-count aria-label="0 games selected for comparison">0</span></a></nav>
     <div class="header-actions"><a class="saved-link" href="my-games.html"><span aria-hidden="true">♡</span><span class="saved-link-label">Saved</span><span class="saved-count" data-favorite-count>0</span></a><form class="search-container" action="games.html" method="get" role="search"><label class="visually-hidden" for="globalSearch">Search the game library</label><span class="search-icon" aria-hidden="true">⌕</span><input id="globalSearch" name="q" type="search" placeholder="Search games..." autocomplete="off"></form></div>
   </header>
   <main id="mainContent" class="page-main detail-page">
@@ -24,7 +24,9 @@
     <section class="game-detail-layout" id="gameDetail" hidden>
       <div class="detail-visual"><img class="detail-art" id="detailArtwork" alt="" loading="eager" decoding="async"></div>
       <div class="detail-copy"><p class="eyebrow" id="detailGenre"></p><h1 id="detailTitle"></h1><div class="detail-meta" id="detailMeta"></div><p class="detail-description" id="detailDescription"></p>
-        <div class="detail-actions"><button class="favorite-btn" id="detailFavorite" type="button" aria-pressed="false">♡ Add to favourites</button><button class="details-button" id="detailCompare" type="button" data-action="compare-toggle" aria-pressed="false">＋ Add to comparison</button><a class="details-button" href="games.html">Back to library</a></div>
+        <div class="detail-actions"><button class="favorite-btn" id="detailFavorite" type="button" aria-pressed="false">♡ Add to favourites</button><button class="details-button" id="detailCompare" type="button" data-action="compare-toggle" aria-pressed="false">＋ Add to comparison</button><button class="details-button" id="shareGame" type="button">Copy game link</button><a class="details-button" href="games.html">Back to library</a></div>
+        <dl class="detail-extra-metadata" id="detailExtraMetadata" hidden></dl>
+        <section class="detail-requirements" id="detailRequirements" aria-label="PC system requirements" hidden></section>
         <section class="detail-purchase" aria-labelledby="detailPurchaseTitle"><p class="eyebrow">PURCHASE OPTIONS</p><h2 id="detailPurchaseTitle">Retailer offers</h2><div class="detail-offers" id="detailOffers" aria-live="polite"></div></section>
       </div>
     </section>

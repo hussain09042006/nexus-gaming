@@ -30,6 +30,7 @@
     <nav class="nav-links" id="mainNavigation" aria-label="Main navigation">
       <a href="index.html" data-nav-page="home">Home</a>
       <a href="games.html" data-nav-page="games">Library</a>
+      <a href="free-games.html" data-nav-page="free-games">Free Games</a>
       <a href="genres.html" data-nav-page="genres">Genres</a>
       <a href="my-games.html" data-nav-page="my-games">My Games</a>
       <a href="store.html" data-nav-page="store">Store</a>
@@ -62,6 +63,7 @@
         <div class="hero-actions">
           <button class="cta-button" id="exploreFeatured" type="button">Explore Game <span aria-hidden="true">↗</span></button>
           <button class="hero-save" id="saveFeatured" type="button"></button>
+          <button class="details-button" id="randomDiscovery" type="button">Surprise me</button>
         </div>
       </div>
       <div class="hero-art-caption"><span class="live-dot"></span> EDITOR'S PICK</div>
@@ -84,9 +86,14 @@
       <div class="genre-browser" id="genreBrowser"></div>
     </section>
 
+    <section class="free-games-promo" aria-labelledby="freeGamesPromoTitle">
+      <div><p class="eyebrow">NO-COST PICKS</p><h2 id="freeGamesPromoTitle">Explore free games<span class="heading-period">.</span></h2><p>Browse official game pages and check current access details before you play.</p></div>
+      <a class="cta-button" href="free-games.html">Browse Free Games <span aria-hidden="true">↗</span></a>
+    </section>
+
     <section class="trending-section" id="trending" aria-labelledby="trendingTitle">
       <div class="section-heading trending-heading">
-        <div><p class="eyebrow">SELECTED FROM THE NEXUS LIBRARY</p><h2 id="trendingTitle">Featured picks<span class="heading-period">.</span></h2></div>
+        <div><p class="eyebrow">CURATED FROM THE NEXUS LIBRARY</p><h2 id="trendingTitle">Featured picks<span class="heading-period">.</span></h2></div>
         <a class="section-link" href="#games">Explore library <span aria-hidden="true">↘</span></a>
       </div>
       <div class="trending-cards" id="trendingCards"></div>
@@ -95,7 +102,7 @@
     <section class="discovery-row" aria-label="Game discovery">
       <section class="discovery-panel" id="topRated" aria-labelledby="topRatedTitle">
         <div class="section-heading compact-heading">
-          <div><p class="eyebrow">HIGHEST SCORES</p><h2 id="topRatedTitle">Top rated<span class="heading-period">.</span></h2></div>
+          <div><p class="eyebrow">CATALOG VALUES · SOURCE UNVERIFIED</p><h2 id="topRatedTitle">Highest catalog scores<span class="heading-period">.</span></h2></div>
           <a class="section-link" href="#games" data-sort-link="rating">View all <span aria-hidden="true">↘</span></a>
         </div>
         <div class="mini-game-list" id="topRatedGames"></div>
@@ -110,7 +117,7 @@
 
     <section class="trending-section release-section" id="newReleases" aria-labelledby="newReleasesTitle">
       <div class="section-heading trending-heading">
-        <div><p class="eyebrow">ORDERED BY CATALOG RELEASE YEAR</p><h2 id="newReleasesTitle">Recent releases<span class="heading-period">.</span></h2></div>
+        <div><p class="eyebrow">RELEASE YEARS IN THE CATALOG</p><h2 id="newReleasesTitle">Latest release years<span class="heading-period">.</span></h2></div>
         <a class="section-link" href="games.html?sort=year-desc">Browse by year <span aria-hidden="true">↘</span></a>
       </div>
       <div class="trending-cards" id="newReleaseCards"></div>
@@ -142,7 +149,7 @@
         <div><p class="eyebrow">SIDE-BY-SIDE</p><h2 id="comparisonTitle">Compare games<span class="heading-period">.</span></h2></div>
         <button class="clear-filters" id="clearComparison" type="button">Clear comparison</button>
       </div>
-      <p class="comparison-hint">Add up to three games to compare their available details.</p>
+      <p class="comparison-hint">Add up to four games to compare their available details.</p>
       <div class="comparison-content" id="comparisonContent"></div>
     </section>
 
@@ -193,7 +200,7 @@
     <a class="logo footer-logo" href="index.html"><span class="logo-mark">N</span> NEXUS<span class="logo-accent">GAMING</span></a>
     <p class="footer-description">A curated guide to your next great game.</p>
     <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="games.html">Game library</a><a href="genres.html">Genres</a><a href="my-games.html">My Games</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="#home">Back to top ↑</a>
+      <a href="games.html">Game library</a><a href="free-games.html">Free Games</a><a href="genres.html">Genres</a><a href="my-games.html">My Games</a><a href="store.html">Store</a><a href="compare.html">Compare</a><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="#home">Back to top ↑</a>
     </nav>
     <span class="copyright">&copy; <span id="currentYear"></span> Nexus Gaming <span class="footer-separator">·</span> Your saved games stay on this device.<span class="rating-disclaimer">Only the original eight games show legacy ratings; their sources are unverified.</span></span>
   </footer>
@@ -217,6 +224,7 @@
         <button class="favorite-btn dialog-favorite" id="dialogFavorite" type="button"></button>
         <button class="details-button" id="dialogWishlist" type="button"></button>
         <button class="details-button" id="dialogCompare" type="button">＋ Compare</button>
+        <a class="details-button" id="dialogFullDetails" href="games.html">Full game details</a>
       </div>
     </div>
   </dialog>

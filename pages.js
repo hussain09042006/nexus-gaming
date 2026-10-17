@@ -4,13 +4,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const favoriteKey = 'favorites';
   const recentKey = 'nexus.recent.v1';
   const comparisonKey = 'nexus.compare.v1';
-  const comparisonLimit = 3;
+  const wishlistKey = 'nexus.wishlist.v1';
+  const viewKey = 'nexus.view.v1';
+  const personalKey = 'nexus.library.v1';
+  const personalRecoveryKey = 'nexus.library.recovery.v1';
+  const comparisonLimit = 4;
+  const personalStatuses = [
+    ['wishlist', 'Wishlist'],
+    ['want-to-play', 'Want to Play'],
+    ['playing', 'Currently Playing'],
+    ['completed', 'Completed'],
+    ['abandoned', 'Abandoned']
+  ];
   const validIds = new Set(games.map(game => game.id));
   const byId = id => games.find(game => game.id === id);
   const queryParams = new URLSearchParams(window.location.search);
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let libraryApplyFilters = null;
   let libraryFavoritesOnly = false;
+  let personalDataInvalid = false;
+  let personalDataWarningShown = false;
+
+  function safeRead(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.warn(`Could not read local setting "${key}".`, error);
+      return null;
+    }
+  }
 
   function readIds(key) {
     try {
@@ -34,6 +56,64 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error(`Could not save "${key}" in this browser.`, error);
       announce('Your change could not be saved in this browser.');
+      return false;
+    }
+  }
+
+  function readPersonalEntries() {
+    try {
+      const raw = localStorage.getItem(personalKey);
+      if (raw === null) {
+        personalDataInvalid = false;
+        return [];
+      }
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        personalDataInvalid = true;
+        warnPersonalData();
+        return [];
+      }
+      const seen = new Set();
+      const entries = parsed.filter(entry => {
+        if (!entry || typeof entry !== 'object' || !Number.isInteger(entry.id) ||
+            !validIds.has(entry.id) || seen.has(entry.id) ||
+            !personalStatuses.some(([status]) => status === entry.status) ||
+            (entry.rating !== null && (!Number.isInteger(entry.rating) || entry.rating < 1 || entry.rating > 5)) ||
+            typeof entry.note !== 'string' || entry.note.length > 500) return false;
+        seen.add(entry.id);
+        return true;
+      }).map(entry => ({
+        id: entry.id,
+        status: entry.status,
+        rating: entry.rating,
+        note: entry.note
+      }));
+      personalDataInvalid = entries.length !== parsed.length;
+      if (personalDataInvalid) warnPersonalData();
+      return entries;
+    } catch (error) {
+      console.warn(`Stored personal library "${personalKey}" could not be read; keeping it unchanged.`, error);
+      personalDataInvalid = true;
+      warnPersonalData();
+      return [];
+    }
+  }
+
+  function warnPersonalData() {
+    if (personalDataWarningShown) return;
+    personalDataWarningShown = true;
+    announce('Saved personal-library data is malformed and has been left untouched. Export it for safekeeping or import a valid backup to recover.');
+  }
+
+  function storedIdListIsValid(key, limit = games.length) {
+    const raw = safeRead(key);
+    if (raw === null) return true;
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length <= limit &&
+      parsed.every(id => Number.isInteger(id) && validIds.has(id));
+    } catch (error) {
+      console.warn(`Stored list "${key}" is malformed and cannot be safely merged.`, error);
       return false;
     }
   }
@@ -209,7 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (offer.type === 'affiliate') {
         const disclosure = document.createElement('p');
         disclosure.className = 'affiliate-disclosure';
-        disclosure.textContent = 'We may earn a commission from purchases made through this affiliate link.';
+        disclosure.textContent = offer.commission === true
+          ? 'We may earn a commission from purchases made through this affiliate link.'
+          : 'Affiliate link. Commission eligibility is not confirmed.';
         item.append(disclosure);
       }
       container.append(item);
@@ -246,6 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleComparison(id) {
     const current = readComparisonIds();
+    if (!validIds.has(id)) {
+      announce('That game is not in the current catalog.');
+      return;
+    }
     if (!current.includes(id) && current.length >= comparisonLimit) {
       announce(`Compare up to ${comparisonLimit} games at a time.`);
       return;
@@ -342,22 +428,154 @@ document.addEventListener('DOMContentLoaded', () => {
     render();
   }
 
+  function renderFreeGames() {
+    const games = [
+      {
+        title: 'Brawlhalla',
+        genre: 'Platform fighter',
+        access: 'Free-to-play · confirmed by official site',
+        verifiedFree: true,
+        website: 'https://www.brawlhalla.com/',
+        artwork: 'https://www.brawlhalla.com/img/Logo_BrawlhallaHammer.png',
+        alt: 'Brawlhalla official game logo artwork'
+      },
+      {
+        title: "Tom Clancy's Rainbow Six Siege",
+        genre: '',
+        access: 'Free-access status needs verification',
+        verifiedFree: false,
+        website: 'https://www.ubisoft.com/en-us/game/rainbow-six/siege',
+        artwork: 'https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4IZecJyhvcIUxxu0Rd1vjX/99fe1a724d46a4d9ca70c76c7a78496f/r6s-homepage-meta__1_.jpg',
+        alt: "Tom Clancy's Rainbow Six Siege official key art"
+      },
+      {
+        title: 'Roller Champions',
+        genre: 'Sports',
+        access: 'Free-to-play · confirmed by official site',
+        verifiedFree: true,
+        website: 'https://www.ubisoft.com/en-us/games/roller-champions',
+        artwork: 'https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5tNmP0Ssg2BMbjZ2ppMvuA/ebd2b09fe1dd64c886a5332b257d0415/5cf15f4f39798c0870c076e7-5.jpg',
+        alt: 'Roller Champions official game artwork'
+      },
+      {
+        title: 'Trackmania Starter Access',
+        genre: 'Racing',
+        access: 'Free-to-play · confirmed by official site',
+        verifiedFree: true,
+        website: 'https://www.ubisoft.com/en-gb/games/trackmania',
+        artwork: 'https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/V1ppi7x8Z4zUk58NnKIrs/fe593cc06d7139b9ad181ef061c43100/5e8b58345cdf9a12c868c878-1.jpg',
+        alt: 'Trackmania official racing game artwork'
+      },
+      {
+        title: 'The Division Resurgence',
+        genre: '',
+        access: 'Free-access status needs verification',
+        verifiedFree: false,
+        website: 'https://www.ubisoft.com/en-us/game/the-division/resurgence',
+        artwork: 'https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5EScWLoHhqf8Hj6Lel529F/74d8275a5590a382d4f70df3d5cd08c9/The_Division_Resurgence_Thumbnail_FINAL.jpg',
+        alt: 'The Division Resurgence official game artwork'
+      }
+    ];
+    const container = document.getElementById('freeGamesCards');
+    const search = document.getElementById('freeGamesSearch');
+    const genre = document.getElementById('freeGamesGenre');
+    const count = document.getElementById('freeGamesCount');
+    const empty = document.getElementById('freeGamesEmpty');
+    const filters = document.getElementById('freeGamesFilters');
+    if (!container || !search || !genre || !count || !empty || !filters) return;
+
+    [...new Set(games.map(game => game.genre).filter(Boolean))].sort().forEach(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      genre.append(option);
+    });
+
+    const render = () => {
+      const term = search.value.trim().toLocaleLowerCase();
+      const selectedGenre = genre.value;
+      const matching = games.filter(game =>
+        (selectedGenre === 'all' || game.genre === selectedGenre) &&
+        (!term || `${game.title} ${game.genre} ${game.access}`.toLocaleLowerCase().includes(term)));
+      container.replaceChildren();
+      matching.forEach(game => {
+        const card = document.createElement('article');
+        card.className = 'free-game-card';
+        const art = document.createElement('div');
+        art.className = 'free-game-art';
+        const image = document.createElement('img');
+        image.src = game.artwork;
+        image.alt = game.alt;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.addEventListener('error', () => {
+          image.hidden = true;
+        }, { once: true });
+        art.append(image);
+
+        const content = document.createElement('div');
+        content.className = 'free-game-content';
+        const access = document.createElement('p');
+        access.className = game.verifiedFree ? 'free-game-status' : 'free-game-status needs-verification';
+        access.textContent = game.access;
+        const title = document.createElement('h2');
+        title.textContent = game.title;
+        const genreLine = document.createElement('p');
+        genreLine.className = 'free-game-genre';
+        genreLine.textContent = game.genre ? `Genre · ${game.genre}` : 'Genre · Not verified';
+        const website = document.createElement('a');
+        website.className = 'details-button free-game-link';
+        website.href = game.website;
+        website.target = '_blank';
+        website.rel = 'noopener noreferrer';
+        website.textContent = 'Official Website';
+        content.append(access, title, genreLine, website);
+        card.append(art, content);
+        container.append(card);
+      });
+      count.textContent = `Showing ${matching.length} of ${games.length} games`;
+      empty.hidden = matching.length > 0;
+    };
+
+    search.addEventListener('input', render);
+    genre.addEventListener('change', render);
+    filters.addEventListener('submit', event => event.preventDefault());
+    document.getElementById('clearFreeGamesFilters').addEventListener('click', () => {
+      search.value = '';
+      genre.value = 'all';
+      render();
+      search.focus();
+    });
+    render();
+  }
+
   function renderLibrary() {
     const cards = document.getElementById('libraryCards');
     const search = document.getElementById('librarySearch');
     const genreSelect = document.getElementById('libraryGenre');
     const sort = document.getElementById('librarySort');
     const rating = document.getElementById('libraryRating');
+    const year = document.getElementById('libraryYear');
+    const platform = document.getElementById('libraryPlatform');
     const count = document.getElementById('libraryCount');
     if (!cards || !search || !genreSelect || !sort || !rating || !count) return;
 
     const genres = [...new Set(games.map(game => game.genre))].sort((a, b) => a.localeCompare(b));
     genreSelect.replaceChildren(new Option('All genres', 'all'), ...genres.map(item => new Option(item, item)));
+    const years = [...new Set(games.map(game => game.year).filter(Number.isFinite))].sort((a, b) => b - a);
+    year.replaceChildren(new Option('All years', 'all'), ...years.map(item => new Option(String(item), String(item))));
+    const platforms = [...new Set(games.flatMap(game => Array.isArray(game.platforms) ? game.platforms : []))]
+      .filter(item => typeof item === 'string' && item.trim())
+      .sort((a, b) => a.localeCompare(b));
+    platform.replaceChildren(new Option('All platforms', 'all'), ...platforms.map(item => new Option(item, item)));
+    platform.closest('label').hidden = platforms.length === 0;
     const params = new URLSearchParams(window.location.search);
     const requestedGenre = params.get('genre') || 'all';
     const genre = genres.includes(requestedGenre) ? requestedGenre : 'all';
     search.value = params.get('q') || '';
     genreSelect.value = genre;
+    year.value = years.includes(Number(params.get('year'))) ? params.get('year') : 'all';
+    platform.value = platforms.includes(params.get('platform')) ? params.get('platform') : 'all';
     sort.value = ['title-asc', 'title-desc', 'year-asc', 'year-desc', 'rating-desc'].includes(params.get('sort'))
       ? params.get('sort')
       : 'rating-desc';
@@ -374,6 +592,8 @@ document.addEventListener('DOMContentLoaded', () => {
           .toLocaleLowerCase();
         return (!term || searchable.includes(term)) &&
           (genreSelect.value === 'all' || game.genre === genreSelect.value) &&
+          (year.value === 'all' || game.year === Number(year.value)) &&
+          (platform.value === 'all' || (Array.isArray(game.platforms) && game.platforms.includes(platform.value))) &&
           (minimum === 0 || (Number.isFinite(game.rating) && game.rating >= minimum)) &&
           (!favoriteIds || favoriteIds.has(game.id));
       });
@@ -392,30 +612,61 @@ document.addEventListener('DOMContentLoaded', () => {
       cards.replaceChildren(...(results.length
         ? results.map(game => makeCard(game))
         : [makeEmpty('No games match these filters', 'Clear filters', 'clear-library')]));
-      count.textContent = `${results.length} ${results.length === 1 ? 'game' : 'games'}${libraryFavoritesOnly ? ' · favourites' : ''}`;
+      cards.classList.toggle('list-view', safeRead(viewKey) === 'list');
+      count.textContent = `${results.length} of ${games.length} ${results.length === 1 ? 'game' : 'games'}${libraryFavoritesOnly ? ' · favourites' : ''}`;
+      const active = [];
+      if (search.value.trim()) active.push(`Search: “${search.value.trim()}”`);
+      if (genreSelect.value !== 'all') active.push(`Genre: ${genreSelect.value}`);
+      if (year.value !== 'all') active.push(`Year: ${year.value}`);
+      if (platform.value !== 'all') active.push(`Platform: ${platform.value}`);
+      if (rating.value !== '0') active.push(`Rating: ${rating.value}+`);
+      document.getElementById('activeLibraryFilters').textContent = active.length
+        ? `Active filters: ${active.join(' · ')}`
+        : 'No active filters';
       if (sync) updateUrl({
         q: search.value.trim(),
         genre: genreSelect.value,
+        year: year.value,
+        platform: platform.value,
         sort: sort.value === 'rating-desc' ? '' : sort.value,
         rating: rating.value
       });
     };
     search.addEventListener('input', () => applyFilters());
     genreSelect.addEventListener('change', () => applyFilters(true));
+    year.addEventListener('change', () => applyFilters(true));
+    platform.addEventListener('change', () => applyFilters(true));
     sort.addEventListener('change', () => applyFilters(true));
     rating.addEventListener('change', () => applyFilters(true));
     document.getElementById('clearLibraryFilters')?.addEventListener('click', () => {
       search.value = '';
       genreSelect.value = 'all';
+      year.value = 'all';
+      platform.value = 'all';
       sort.value = 'rating-desc';
       rating.value = '0';
-      updateUrl({ q: '', genre: '', sort: '', rating: '' });
+      updateUrl({ q: '', genre: '', year: '', platform: '', sort: '', rating: '' });
       applyFilters(false);
     });
     document.getElementById('favoritesOnly')?.addEventListener('click', event => {
       libraryFavoritesOnly = !libraryFavoritesOnly;
       event.currentTarget.setAttribute('aria-pressed', String(libraryFavoritesOnly));
       applyFilters(false);
+    });
+    document.querySelectorAll('[data-library-view]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.libraryView === (safeRead(viewKey) === 'list' ? 'list' : 'grid')));
+      button.addEventListener('click', () => {
+        const nextView = button.dataset.libraryView === 'list' ? 'list' : 'grid';
+        try {
+          localStorage.setItem(viewKey, nextView);
+        } catch (error) {
+          console.warn(`Could not persist "${viewKey}".`, error);
+        }
+        document.querySelectorAll('[data-library-view]').forEach(item => {
+          item.setAttribute('aria-pressed', String(item === button));
+        });
+        cards.classList.toggle('list-view', nextView === 'list');
+      });
     });
     window.addEventListener('popstate', () => window.location.reload());
     libraryApplyFilters = applyFilters;
@@ -441,22 +692,262 @@ document.addEventListener('DOMContentLoaded', () => {
     return empty;
   }
 
+  function filterPersonalGames(list) {
+    const term = (document.getElementById('personalLibrarySearch')?.value || '').trim().toLocaleLowerCase();
+    const sort = document.getElementById('personalLibrarySort')?.value || 'saved';
+    const entries = new Map(readPersonalEntries().map(entry => [entry.id, entry]));
+    const filtered = list.filter(game => !term ||
+      [game.title, game.genre, game.description, entries.get(game.id)?.note || '']
+        .join(' ').toLocaleLowerCase().includes(term));
+    if (sort === 'title') filtered.sort((first, second) => first.title.localeCompare(second.title));
+    if (sort === 'year') filtered.sort((first, second) =>
+      (Number.isFinite(second.year) ? second.year : -Infinity) -
+      (Number.isFinite(first.year) ? first.year : -Infinity) || first.title.localeCompare(second.title));
+    if (sort === 'rating') filtered.sort((first, second) =>
+      (Number.isFinite(second.rating) ? second.rating : -Infinity) -
+      (Number.isFinite(first.rating) ? first.rating : -Infinity) || first.title.localeCompare(second.title));
+    return filtered;
+  }
+
+  function renderPersonalStatuses() {
+    const container = document.getElementById('personalStatusSections');
+    if (!container) return;
+    const entries = readPersonalEntries();
+    const legacyWishlist = readIds(wishlistKey);
+    container.replaceChildren(...personalStatuses.filter(([status]) => status !== 'wishlist' || legacyWishlist.length || entries.some(entry => entry.status === status)).map(([status, label]) => {
+      const section = document.createElement('section');
+      section.className = 'personal-status-section';
+      const heading = document.createElement('h3');
+      const listed = entries.filter(entry => entry.status === status);
+      const ids = status === 'wishlist'
+        ? [...new Set([...legacyWishlist, ...listed.map(entry => entry.id)])]
+        : listed.map(entry => entry.id);
+      const listedGames = filterPersonalGames(ids.map(byId).filter(Boolean));
+      heading.textContent = `${label} (${listedGames.length})`;
+      section.append(heading);
+      if (!listedGames.length) {
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = ids.length ? 'No games in this list match your search.' : 'No games in this list yet.';
+        section.append(empty);
+      } else {
+        const list = document.createElement('div');
+        list.className = 'personal-status-list';
+        listedGames.forEach(game => {
+          const entry = listed.find(item => item.id === game.id);
+          const card = makeCard(game);
+          const details = document.createElement('div');
+          details.className = 'personal-entry-details';
+          if (entry?.rating) {
+            const rating = document.createElement('p');
+            rating.textContent = `Your rating: ${entry.rating} / 5`;
+            details.append(rating);
+          }
+          if (entry?.note) {
+            const note = document.createElement('p');
+            note.textContent = entry.note;
+            details.append(note);
+          }
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'details-button';
+          remove.dataset.action = 'remove-personal';
+          remove.dataset.gameId = String(game.id);
+          remove.dataset.status = status;
+          remove.textContent = `Remove from ${label}`;
+          details.append(remove);
+          card.append(details);
+          list.append(card);
+        });
+        section.append(list);
+      }
+      return section;
+    }));
+  }
+
   function renderMyGames() {
     const favorites = document.getElementById('favoriteCards');
     const recent = document.getElementById('recentCards');
     if (!favorites || !recent) return;
-    const favoriteGames = readIds(favoriteKey).map(byId).filter(Boolean);
-    const recentGames = readIds(recentKey).map(byId).filter(Boolean);
+    const favoriteGames = filterPersonalGames(readIds(favoriteKey).map(byId).filter(Boolean));
+    const recentGames = filterPersonalGames(readIds(recentKey).map(byId).filter(Boolean));
     favorites.replaceChildren(...(favoriteGames.length
       ? favoriteGames.map(game => makeCard(game, { removeFavorite: true }))
-      : [makeEmpty('Your favourites will appear here', 'Browse the library', 'go-library', 'Save a game from the catalog to keep it here.')]));
+      : [makeEmpty(readIds(favoriteKey).length ? 'No favourites match your search' : 'Your favourites will appear here', 'Browse the library', 'go-library', 'Save a game from the catalog to keep it here.')]));
     recent.replaceChildren(...(recentGames.length
       ? recentGames.map(game => makeCard(game, { removeRecent: true }))
-      : [makeEmpty('No recently viewed games yet', 'Explore games', 'go-library', 'Games you open will appear here on this device.')]));
+      : [makeEmpty(readIds(recentKey).length ? 'No recent games match your search' : 'No recently viewed games yet', 'Explore games', 'go-library', 'Games you open will appear here on this device.')]));
     document.getElementById('favoritePageCount').textContent = String(favoriteGames.length);
     document.getElementById('recentPageCount').textContent = String(recentGames.length);
     updateFavoriteCount();
     updateComparisonCount();
+    renderPersonalStatuses();
+  }
+
+  function initializePersonalLibrary() {
+    const select = document.getElementById('personalGame');
+    const form = document.getElementById('personalEntryForm');
+    const exportButton = document.getElementById('exportLibrary');
+    const importButton = document.getElementById('importLibraryButton');
+    const importInput = document.getElementById('importLibrary');
+    if (!select || !form || !exportButton || !importButton || !importInput) return;
+    document.getElementById('personalLibrarySearch').addEventListener('input', renderMyGames);
+    document.getElementById('personalLibrarySort').addEventListener('change', renderMyGames);
+    select.replaceChildren(...games.map(game => new Option(game.title, String(game.id))));
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const id = Number(select.value);
+      if (!validIds.has(id)) {
+        announce('Choose a game from the current catalog.');
+        return;
+      }
+      const status = document.getElementById('personalStatus').value;
+      if (!personalStatuses.some(([value]) => value === status)) {
+        announce('Choose a valid personal list.');
+        return;
+      }
+      const ratingInput = document.getElementById('personalRating').value;
+      const note = document.getElementById('personalNote').value.trim();
+      const entries = readPersonalEntries();
+      if (personalDataInvalid) return;
+      const next = entries.filter(entry => entry.id !== id);
+      next.push({ id, status, rating: ratingInput ? Number(ratingInput) : null, note });
+      const previous = new Map();
+      try {
+        previous.set(personalKey, localStorage.getItem(personalKey));
+        previous.set(wishlistKey, localStorage.getItem(wishlistKey));
+        const wishlist = readIds(wishlistKey);
+        const nextWishlist = status === 'wishlist'
+          ? [...new Set([...wishlist, id])]
+          : wishlist.filter(item => item !== id);
+        localStorage.setItem(personalKey, JSON.stringify(next));
+        localStorage.setItem(wishlistKey, JSON.stringify(nextWishlist));
+      } catch (error) {
+        console.error('Could not save personal list changes; restoring their previous values.', error);
+        previous.forEach((value, key) => {
+          try {
+            if (value === null) localStorage.removeItem(key);
+            else localStorage.setItem(key, value);
+          } catch (rollbackError) {
+            console.error(`Could not restore "${key}" after a failed personal-list update.`, rollbackError);
+          }
+        });
+        announce('Your personal list could not be saved; previous data was restored where possible.');
+        return;
+      }
+      document.getElementById('personalNote').value = '';
+      document.getElementById('personalRating').value = '';
+      renderMyGames();
+      announce('Saved to your personal library.');
+    });
+    exportButton.addEventListener('click', () => {
+      const personalEntries = readPersonalEntries();
+      const backup = {
+        format: 'nexus-gaming-library',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        favorites: readIds(favoriteKey),
+        wishlist: readIds(wishlistKey),
+        recentlyViewed: readIds(recentKey),
+        comparison: readComparisonIds(),
+        view: safeRead(viewKey) === 'list' ? 'list' : 'grid',
+        personalEntries,
+        recoveryData: personalDataInvalid ? safeRead(personalKey) : safeRead(personalRecoveryKey)
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'nexus-gaming-library.json';
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      announce('Library backup exported.');
+    });
+    importButton.addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', async () => {
+      const file = importInput.files?.[0];
+      importInput.value = '';
+      if (!file) return;
+      if (file.size > 1024 * 1024) {
+        announce('Backup files must be no larger than 1 MB.');
+        return;
+      }
+      let backup;
+      try {
+        backup = JSON.parse(await file.text());
+      } catch (error) {
+        console.warn('Library backup could not be parsed.', error);
+        announce('That file is not valid JSON; no library data was changed.');
+        return;
+      }
+      const validList = value => Array.isArray(value) && value.every(id => Number.isInteger(id) && validIds.has(id));
+      const validPersonal = value => Array.isArray(value) && value.every(entry =>
+        entry && typeof entry === 'object' && Number.isInteger(entry.id) && validIds.has(entry.id) &&
+        personalStatuses.some(([status]) => status === entry.status) &&
+        (entry.rating === null || (Number.isInteger(entry.rating) && entry.rating >= 1 && entry.rating <= 5)) &&
+        typeof entry.note === 'string' && entry.note.length <= 500);
+      if (!backup || backup.format !== 'nexus-gaming-library' || backup.version !== 1 ||
+          !validList(backup.favorites) || !validList(backup.wishlist) ||
+          !validList(backup.recentlyViewed) || !validList(backup.comparison) ||
+          backup.comparison.length > comparisonLimit || !validPersonal(backup.personalEntries) ||
+          !['grid', 'list'].includes(backup.view) ||
+          (backup.recoveryData !== undefined &&
+            backup.recoveryData !== null &&
+            (typeof backup.recoveryData !== 'string' || backup.recoveryData.length > 1024 * 1024))) {
+        announce('This backup has unsupported or invalid data; no library data was changed.');
+        return;
+      }
+      const currentPersonalEntries = readPersonalEntries();
+      if (!storedIdListIsValid(favoriteKey) ||
+          !storedIdListIsValid(wishlistKey) || !storedIdListIsValid(recentKey) ||
+          !storedIdListIsValid(comparisonKey, comparisonLimit) ||
+          (safeRead(viewKey) !== null && !['grid', 'list'].includes(safeRead(viewKey)))) {
+        announce('Existing browser data is malformed and was left untouched. Restore or export a valid backup before importing.');
+        return;
+      }
+      const hadMalformedPersonalData = personalDataInvalid;
+      const keys = [favoriteKey, wishlistKey, recentKey, comparisonKey, viewKey, personalKey, personalRecoveryKey];
+      const previous = new Map();
+      try {
+        keys.forEach(key => previous.set(key, localStorage.getItem(key)));
+        if (previous.get(personalRecoveryKey) === null) {
+          const recovery = hadMalformedPersonalData
+            ? previous.get(personalKey)
+            : backup.recoveryData;
+          if (typeof recovery === 'string' && recovery) localStorage.setItem(personalRecoveryKey, recovery);
+        }
+        const mergeIds = (key, imported) => [...new Set([...readIds(key), ...imported])];
+        const mergedEntries = new Map(currentPersonalEntries.map(entry => [entry.id, entry]));
+        backup.personalEntries.forEach(entry => mergedEntries.set(entry.id, {
+          id: entry.id, status: entry.status, rating: entry.rating, note: entry.note
+        }));
+        localStorage.setItem(favoriteKey, JSON.stringify(mergeIds(favoriteKey, backup.favorites)));
+        localStorage.setItem(wishlistKey, JSON.stringify(mergeIds(wishlistKey, backup.wishlist)));
+        localStorage.setItem(recentKey, JSON.stringify([...new Set([...backup.recentlyViewed, ...readIds(recentKey)])].slice(0, 12)));
+        localStorage.setItem(comparisonKey, JSON.stringify([...new Set([...readComparisonIds(), ...backup.comparison])].slice(0, comparisonLimit)));
+        localStorage.setItem(viewKey, backup.view);
+        localStorage.setItem(personalKey, JSON.stringify([...mergedEntries.values()]));
+      } catch (error) {
+        console.error('Library import failed; restoring the original browser data.', error);
+        keys.forEach(key => {
+          try {
+            const value = previous.get(key);
+            if (value === null) localStorage.removeItem(key);
+            else if (value !== undefined) localStorage.setItem(key, value);
+          } catch (rollbackError) {
+            console.error(`Could not restore "${key}" after a failed import.`, rollbackError);
+          }
+        });
+        announce('Import failed while saving; the original library was restored where possible.');
+        return;
+      }
+      renderMyGames();
+      updateFavoriteCount();
+      updateComparisonCount();
+      announce(hadMalformedPersonalData
+        ? 'Backup merged; the original malformed personal data was retained in the local recovery record.'
+        : 'Backup merged into this browser’s library.');
+    });
   }
 
   function renderGameDetail() {
@@ -484,7 +975,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical?.href || window.location.href);
     document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${game.title} | Nexus Gaming`);
     document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', game.description);
-    document.getElementById('detailArtwork').replaceWith(makeArtwork(game, 'detail-art', 'eager'));
+    const detailArtwork = makeArtwork(game, 'detail-art', 'eager');
+    detailArtwork.id = 'detailArtwork';
+    document.getElementById('detailArtwork').replaceWith(detailArtwork);
     document.getElementById('detailGenre').textContent = game.genre;
     document.getElementById('detailTitle').textContent = game.title;
     document.getElementById('detailDescription').textContent = game.description;
@@ -498,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Number.isFinite(game.rating)) {
       const score = document.createElement('span');
       score.className = 'game-rating';
-      score.textContent = `★ ${game.rating.toFixed(1)} / 5`;
+      score.textContent = `★ ${game.rating.toFixed(1)} / 5 · catalog value, source unverified`;
       meta.append(score);
     } else {
       const unrated = document.createElement('span');
@@ -524,10 +1017,66 @@ document.addEventListener('DOMContentLoaded', () => {
       compare.dataset.gameId = String(game.id);
       updateDetailComparison(game.id);
     }
+    const extraMetadata = [
+      ['Platforms', Array.isArray(game.platforms) ? game.platforms.filter(item => typeof item === 'string' && item.trim()).join(', ') : ''],
+      ['Developer', typeof game.developer === 'string' ? game.developer.trim() : ''],
+      ['Publisher', typeof game.publisher === 'string' ? game.publisher.trim() : ''],
+      ['Player modes', Array.isArray(game.playerModes) ? game.playerModes.filter(item => typeof item === 'string' && item.trim()).join(', ') : '']
+    ].filter(([, value]) => value);
+    const metadataList = document.getElementById('detailExtraMetadata');
+    if (metadataList) {
+      metadataList.replaceChildren(...extraMetadata.map(([label, value]) => {
+        const item = document.createElement('div');
+        const term = document.createElement('dt');
+        term.textContent = label;
+        const description = document.createElement('dd');
+        description.textContent = value;
+        item.append(term, description);
+        return item;
+      }));
+      metadataList.hidden = extraMetadata.length === 0;
+    }
+    const requirements = document.getElementById('detailRequirements');
+    if (requirements) {
+      const values = game.systemRequirements && typeof game.systemRequirements === 'object'
+        ? Object.entries(game.systemRequirements).filter(([, value]) => typeof value === 'string' && value.trim())
+        : [];
+      requirements.hidden = values.length === 0;
+      requirements.replaceChildren(...values.flatMap(([label, value]) => {
+        const heading = document.createElement('h3');
+        heading.textContent = label;
+        const text = document.createElement('p');
+        text.textContent = value;
+        return [heading, text];
+      }));
+    }
     renderOffers(document.getElementById('detailOffers'), game);
     const related = games.filter(item => item.id !== game.id && item.genre === game.genre).slice(0, 4);
     const relatedContainer = document.getElementById('relatedGames');
     relatedContainer.replaceChildren(...related.map(item => makeCard(item)));
+    document.getElementById('shareGame')?.addEventListener('click', async () => {
+      const shareUrl = new URL(`game.html?id=${encodeURIComponent(game.id)}`, window.location.href).href;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = shareUrl;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.append(textarea);
+          textarea.select();
+          const copied = document.execCommand('copy');
+          textarea.remove();
+          if (!copied) throw new Error('Clipboard copy was not permitted.');
+        }
+        announce('Game link copied.');
+      } catch (error) {
+        console.error('Could not copy the game link.', error);
+        announce('Could not copy automatically. Use the address bar to share this page.');
+      }
+    }, { once: true });
   }
 
   function updateDetailComparison(id) {
@@ -551,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Your comparison is empty',
         'Browse the library',
         'go-library',
-        'Choose up to three games from the Library to compare their available details.'
+        `Choose up to ${comparisonLimit} games from the Library to compare their available details.`
       ));
       return;
     }
@@ -587,9 +1136,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = [
       ['Genre', game => game.genre],
       ['Release year', game => Number.isFinite(game.year) ? String(game.year) : 'Not available'],
-      ['Rating', game => Number.isFinite(game.rating) ? `${game.rating.toFixed(1)} / 5` : 'Not available'],
+      ['Rating', game => Number.isFinite(game.rating) ? `${game.rating.toFixed(1)} / 5 (source unverified)` : 'Not available'],
       ['Description', game => game.description || 'Not available']
     ];
+    if (selected.some(game => Array.isArray(game.platforms) && game.platforms.length)) {
+      rows.push(['Platforms', game => Array.isArray(game.platforms) && game.platforms.length ? game.platforms.join(', ') : 'Not available']);
+    }
+    if (selected.some(game => typeof game.developer === 'string' || typeof game.publisher === 'string')) {
+      rows.push(['Developer', game => typeof game.developer === 'string' && game.developer.trim() ? game.developer : 'Not available']);
+      rows.push(['Publisher', game => typeof game.publisher === 'string' && game.publisher.trim() ? game.publisher : 'Not available']);
+    }
+    if (selected.some(game => game.systemRequirements && typeof game.systemRequirements === 'object')) {
+      rows.push(['System requirements', game => {
+        const requirements = game.systemRequirements;
+        return requirements && typeof requirements === 'object'
+          ? Object.entries(requirements).map(([label, value]) => `${label}: ${value}`).join('; ') || 'Not available'
+          : 'Not available';
+      }]);
+    }
+    if (selected.some(game => validOffers(game).length)) {
+      rows.push(['Verified offers', game => {
+        const offers = validOffers(game);
+        return offers.length
+          ? offers.map(offer => `${offer.retailer.trim()}: ${typeof offer.price === 'string' && offer.price.trim() ? offer.price.trim() : 'Price not supplied'}`).join('; ')
+          : 'Not available';
+      }]);
+    }
     rows.forEach(([label, valueFor]) => {
       const row = document.createElement('tr');
       const labelCell = document.createElement('th');
@@ -648,6 +1220,106 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
 
+  function initializeGlobalSearch() {
+    document.querySelectorAll('.search-container input[name="q"]').forEach(input => {
+      const form = input.closest('form');
+      if (!form) return;
+      const results = document.createElement('div');
+      results.className = 'global-search-results';
+      results.id = `${input.id || 'globalSearch'}Results`;
+      results.setAttribute('role', 'listbox');
+      results.setAttribute('aria-label', 'Matching games');
+      results.hidden = true;
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-controls', results.id);
+      input.setAttribute('aria-expanded', 'false');
+      form.append(results);
+      let activeIndex = -1;
+
+      const close = () => {
+        results.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+        activeIndex = -1;
+      };
+      const render = () => {
+        const term = input.value.trim().toLocaleLowerCase();
+        results.replaceChildren();
+        activeIndex = -1;
+        if (!term) {
+          close();
+          return;
+        }
+        const matches = games.filter(game =>
+          [game.title, game.genre, game.description, game.year,
+            ...(Array.isArray(game.platforms) ? game.platforms : [])]
+            .filter(value => value !== undefined && value !== null)
+            .join(' ').toLocaleLowerCase().includes(term)).slice(0, 6);
+        if (!matches.length) {
+          const empty = document.createElement('p');
+          empty.className = 'global-search-empty';
+          empty.textContent = 'No games match that search.';
+          results.append(empty);
+        } else {
+          matches.forEach((game, index) => {
+            const link = document.createElement('a');
+            link.id = `${results.id}-${index}`;
+            link.className = 'global-search-option';
+            link.href = `game.html?id=${encodeURIComponent(game.id)}`;
+            link.setAttribute('role', 'option');
+            link.setAttribute('aria-selected', 'false');
+            const title = document.createElement('strong');
+            title.textContent = game.title;
+            const detail = document.createElement('span');
+            detail.textContent = `${game.genre}${Number.isFinite(game.year) ? ` · ${game.year}` : ''}`;
+            link.append(title, detail);
+            results.append(link);
+          });
+        }
+        results.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+      };
+      const activate = nextIndex => {
+        const options = [...results.querySelectorAll('[role="option"]')];
+        if (!options.length) return;
+        activeIndex = (nextIndex + options.length) % options.length;
+        options.forEach((option, index) => option.setAttribute('aria-selected', String(index === activeIndex)));
+        input.setAttribute('aria-activedescendant', options[activeIndex].id);
+      };
+      input.addEventListener('input', render);
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !results.hidden) {
+          event.preventDefault();
+          close();
+        } else if (event.key === 'ArrowDown' && !results.hidden) {
+          event.preventDefault();
+          activate(activeIndex + 1);
+        } else if (event.key === 'ArrowUp' && !results.hidden) {
+          event.preventDefault();
+          activate(activeIndex < 0 ? results.children.length - 1 : activeIndex - 1);
+        } else if (event.key === 'Enter' && activeIndex >= 0) {
+          const option = results.querySelectorAll('[role="option"]')[activeIndex];
+          if (option) {
+            event.preventDefault();
+            window.location.href = option.href;
+          }
+        }
+      });
+      results.addEventListener('mousedown', event => event.preventDefault());
+      results.addEventListener('click', event => {
+        const option = event.target.closest('[role="option"]');
+        if (option) window.location.href = option.href;
+      });
+      form.addEventListener('submit', close);
+      document.addEventListener('click', event => {
+        if (!form.contains(event.target)) close();
+      });
+      input.addEventListener('blur', () => window.setTimeout(() => {
+        if (!results.contains(document.activeElement)) close();
+      }, 0));
+    });
+  }
+
   function initializeSharedChrome() {
     const nav = document.getElementById('mainNavigation');
     const toggle = document.getElementById('menuToggle');
@@ -690,12 +1362,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     updateFavoriteCount();
     updateComparisonCount();
+    initializeGlobalSearch();
     window.addEventListener('storage', event => {
       if (event.key === favoriteKey || event.key === null) {
         updateFavoriteCount();
         if (page === 'my-games') renderMyGames();
       }
-      if ((event.key === recentKey || event.key === null) && page === 'my-games') renderMyGames();
+      if ((event.key === recentKey || event.key === wishlistKey || event.key === personalKey || event.key === null) && page === 'my-games') renderMyGames();
       if (event.key === comparisonKey || event.key === null) {
         updateComparisonCount();
         updateComparisonButtons();
@@ -742,16 +1415,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (action.dataset.action === 'compare-toggle') toggleComparison(id);
     if (action.dataset.action === 'remove-recent') {
-      writeIds(recentKey, readIds(recentKey).filter(item => item !== id));
+      if (writeIds(recentKey, readIds(recentKey).filter(item => item !== id))) {
+        renderMyGames();
+        announce('Removed from recently viewed.');
+      }
+    }
+    if (action.dataset.action === 'remove-personal') {
+      const status = action.dataset.status;
+      const currentEntries = readPersonalEntries();
+      if (personalDataInvalid) return;
+      const nextEntries = currentEntries.filter(entry => entry.id !== id);
+      const previous = new Map();
+      try {
+        previous.set(personalKey, localStorage.getItem(personalKey));
+        if (status === 'wishlist') previous.set(wishlistKey, localStorage.getItem(wishlistKey));
+        localStorage.setItem(personalKey, JSON.stringify(nextEntries));
+        if (status === 'wishlist') {
+          localStorage.setItem(wishlistKey, JSON.stringify(readIds(wishlistKey).filter(item => item !== id)));
+        }
+      } catch (error) {
+        console.error('Could not remove the personal-list entry; restoring its previous values.', error);
+        previous.forEach((value, key) => {
+          try {
+            if (value === null) localStorage.removeItem(key);
+            else localStorage.setItem(key, value);
+          } catch (rollbackError) {
+            console.error(`Could not restore "${key}" after a failed personal-list removal.`, rollbackError);
+          }
+        });
+        announce('The list item could not be removed; previous data was restored where possible.');
+        return;
+      }
       renderMyGames();
+      announce('Removed from your personal library.');
     }
   });
 
   initializeSharedChrome();
   if (page === 'genres') renderGenres();
+  if (page === 'free-games') renderFreeGames();
   if (page === 'games') renderLibrary();
   if (page === 'game') renderGameDetail();
-  if (page === 'my-games') renderMyGames();
+  if (page === 'my-games') {
+    initializePersonalLibrary();
+    renderMyGames();
+  }
   if (page === 'games') libraryApplyFilters?.(false);
   if (page === 'store') renderStore();
   if (page === 'compare') renderComparisonPage();

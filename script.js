@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .filter(game => game && typeof game.title === 'string' && game.title.trim() &&
       typeof game.genre === 'string' && typeof game.description === 'string');
   const featuredRotationDelay = 6000;
+  const comparisonLimit = 4;
   const storageKeys = {
     wishlist: 'nexus.wishlist.v1',
     recent: 'nexus.recent.v1',
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heroAdvancing: false,
     heroRequest: 0,
     view: readView(),
-    comparison: readIdList(storageKeys.comparison).slice(0, 3),
+    comparison: readIdList(storageKeys.comparison).slice(0, comparisonLimit),
     favorites: readIdList('favorites'),
     wishlist: readIdList(storageKeys.wishlist),
     recentlyViewed: readIdList(storageKeys.recent).slice(0, 6),
@@ -131,15 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const button = card?.querySelector(`[data-action="${target.action}"]`);
       (button || elements.search).focus();
     });
-    window.addEventListener('storage', event => {
-      if (event.key !== storageKeys.comparison && event.key !== null) return;
-      state.comparison = readIdList(storageKeys.comparison).slice(0, 3);
-      renderComparison();
-      renderGames();
-      renderStaticDiscovery();
-      renderDialogState();
-    });
   }
+
+  window.addEventListener('storage', event => {
+    if (event.key !== storageKeys.comparison && event.key !== null) return;
+    state.comparison = readIdList(storageKeys.comparison).slice(0, comparisonLimit);
+    renderComparison();
+    renderGames();
+    renderStaticDiscovery();
+    renderDialogState();
+  });
 
   function scrollBehavior() {
     return reducedMotion.matches ? 'auto' : 'smooth';
@@ -238,7 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
       next.alt = '';
       next.addEventListener('error', () => {
         if (state.heroArtworkCurrent !== next) return;
-        state.heroArtworkCurrent = previous;
+        previous.hidden = true;
+        previous.alt = '';
+        previous.setAttribute('aria-hidden', 'true');
       }, { once: true });
       if (reducedMotion.matches) {
         previous.classList.remove('is-current');
@@ -289,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const game = featuredGames[index];
     if (!game) return false;
     const request = ++state.heroRequest;
-    if (index !== state.featuredIndex && !(await preloadHeroArtwork(game))) return false;
     if (request !== state.heroRequest || (automatic && !canRotateFeatured())) return false;
 
     state.featuredIndex = index;
@@ -515,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
       state.comparison.includes(game.id),
       `${state.comparison.includes(game.id) ? 'Remove' : 'Add'} ${game.title} ${state.comparison.includes(game.id) ? 'from' : 'to'} comparison`
     );
-    compareButton.disabled = !state.comparison.includes(game.id) && state.comparison.length >= 3;
+    compareButton.disabled = !state.comparison.includes(game.id) && state.comparison.length >= comparisonLimit;
     actions.append(
       makeActionButton(
         state.favorites.includes(game.id) ? '♥ Saved' : '♡ Favourite',
@@ -771,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = [
       ['Genre', game => game.genre],
       ['Release year', game => Number.isFinite(game.year) ? String(game.year) : 'Not available'],
-      ['Rating', game => Number.isFinite(game.rating) ? `${game.rating.toFixed(1)} / 5` : 'Not available']
+      ['Catalog score', game => Number.isFinite(game.rating) ? `${game.rating.toFixed(1)} / 5 (source unverified)` : 'Not available']
     ];
     if (selected.some(game => Array.isArray(game.platforms) && game.platforms.length)) {
       rows.push(['Platforms', game => Array.isArray(game.platforms) && game.platforms.length ? game.platforms.join(', ') : 'Not available']);
@@ -809,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dialogWishlist').setAttribute('aria-pressed', String(wishlisted));
     document.getElementById('dialogCompare').textContent = state.comparison.includes(game.id) ? '✓ Comparing' : '＋ Compare';
     document.getElementById('dialogCompare').setAttribute('aria-pressed', String(state.comparison.includes(game.id)));
-    document.getElementById('dialogCompare').disabled = !state.comparison.includes(game.id) && state.comparison.length >= 3;
+    document.getElementById('dialogCompare').disabled = !state.comparison.includes(game.id) && state.comparison.length >= comparisonLimit;
   }
 
   function renderPurchaseOffers(game) {
@@ -883,7 +886,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (offer.type === 'affiliate') {
         const disclosure = document.createElement('p');
         disclosure.className = 'affiliate-disclosure';
-        disclosure.textContent = 'We may earn a commission from purchases made through this affiliate link.';
+        disclosure.textContent = offer.commission === true
+          ? 'We may earn a commission from purchases made through this affiliate link.'
+          : 'Affiliate link. Commission eligibility is not confirmed.';
         item.append(disclosure);
       }
       return item;
@@ -900,9 +905,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setArtwork(artwork, game);
     document.getElementById('dialogGenre').textContent = game.genre;
     document.getElementById('dialogTitle').textContent = game.title;
+    document.getElementById('dialogFullDetails').href = `game.html?id=${encodeURIComponent(game.id)}`;
     document.getElementById('dialogRating').textContent = Number.isFinite(game.rating)
-      ? `★ ${game.rating.toFixed(1)} / 5 · Released ${game.year}`
-      : `Released ${game.year}`;
+      ? `★ ${game.rating.toFixed(1)} / 5 · catalog value, source unverified${Number.isFinite(game.year) ? ` · Released ${game.year}` : ''}`
+      : Number.isFinite(game.year) ? `Released ${game.year}` : 'Release year unavailable';
     document.getElementById('dialogDescription').textContent = game.description;
     renderPurchaseOffers(game);
     renderDialogState();
@@ -918,8 +924,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleComparison(id) {
     const focusTarget = captureCardActionFocus();
     const current = readIdList(storageKeys.comparison);
-    if (!current.includes(id) && current.length >= 3) {
-      announce('Compare up to three games at a time.');
+    if (!current.includes(id) && current.length >= comparisonLimit) {
+      announce(`Compare up to ${comparisonLimit} games at a time.`);
       return;
     }
     const next = current.includes(id) ? current.filter(item => item !== id) : [...current, id];
@@ -1040,6 +1046,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const game = featuredGames[state.featuredIndex];
     if (game) setFavorite(game.id);
   });
+  document.getElementById('randomDiscovery').addEventListener('click', event => {
+    const candidates = games.filter(game => Number.isInteger(game.id) && game.id !== featuredGames[state.featuredIndex]?.id);
+    if (!candidates.length) return;
+    openDetails(candidates[Math.floor(Math.random() * candidates.length)], event.currentTarget);
+  });
   function selectFeatured(index) {
     if (!featuredGames.length) return;
     state.heroRemaining = featuredRotationDelay;
@@ -1066,6 +1077,38 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeaturedRotationState();
   });
   const hero = document.querySelector('.featured-hero');
+  let touchStartX = null;
+  let touchStartY = null;
+  hero.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target.matches('input, textarea, select')) return;
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      selectFeatured(state.featuredIndex - 1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      selectFeatured(state.featuredIndex + 1);
+    }
+  });
+  hero.addEventListener('touchstart', event => {
+    const touch = event.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    state.heroPointerInside = true;
+    updateFeaturedRotationState();
+  }, { passive: true });
+  hero.addEventListener('touchend', event => {
+    if (touchStartX === null || touchStartY === null) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    touchStartX = null;
+    touchStartY = null;
+    if (Math.abs(deltaX) >= 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      selectFeatured(state.featuredIndex + (deltaX < 0 ? 1 : -1));
+    }
+    state.heroPointerInside = false;
+    updateFeaturedRotationState();
+  }, { passive: true });
   hero.addEventListener('pointerenter', () => {
     state.heroPointerInside = true;
     updateFeaturedRotationState();
